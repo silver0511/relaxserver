@@ -1,1 +1,2 @@
-纯粹只支持linux平台的网络服务器
+1. a high performance network base framework
+2. only for linux
