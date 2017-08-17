@@ -1,0 +1,20 @@
+{
+  "log_config":
+  {
+    "log_level":8
+  },
+  "server_side_config":
+  {
+    "nio_threads":1,
+    "deal_threads":2,
+    "max_con":3,
+    "white_ips":"192.168.1.1,192.168.2.2"
+  },
+  "rpc_side_config":
+  {
+    "rpc_con":1,
+    "rpc_con_threads":2,
+    "rpc_recv_threads":3,
+    "rpc_deal_threads":4
+  }
+}

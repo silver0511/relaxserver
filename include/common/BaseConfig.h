@@ -38,6 +38,7 @@ RELAX_NAMESPACE_BEGIN
         ~ServerConfig();
         virtual bool read();
         virtual bool dynamic_read();
+        void get_dump();
     public:
         //log related parameters
         int m_log_level;

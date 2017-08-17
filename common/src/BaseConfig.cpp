@@ -55,8 +55,7 @@ bool BaseConfig::check_event(int elapsed_time)
 
 ServerConfig::ServerConfig()
 {
-    m_user_log_level = 1;
-    m_net_log_level = 1;
+    m_log_level = 1;
 
     m_nio_threads = 1;
     m_deal_threads = 1;
@@ -104,4 +103,13 @@ bool ServerConfig::dynamic_read()
     RJsonValue &child_log = JsonParse::get(m_document, "log_config");
     JsonParse::get<int>(child_log, "log_level", m_log_level);
     return false;
+}
+
+void ServerConfig::get_dump()
+{
+    printf("[ServerConfig get_dump] log_level:%d, nio_threads:%d, deal_threads:%d, max_con:%d, "
+                   "white_ips:%s, rpc_con:%d, rpc_con_threads:%d, rpc_recv_threads:%d, "
+                   "rpc_recv_threads:%d, rpc_deal_threads:%d \n\n", m_log_level, m_nio_threads,
+           m_deal_threads, m_max_con, m_white_ips.c_str(), m_rpc_con, m_rpc_con_threads,
+           m_rpc_recv_threads, m_rpc_deal_threads);
 }
