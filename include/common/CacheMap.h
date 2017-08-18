@@ -2,8 +2,8 @@
 // Created by shiyunjie on 2017/6/26.
 //
 
-#ifndef __RX__CACHEMAP_H__
-#define __RX__CACHEMAP_H__
+#ifndef __RX_CACHEMAP_H__
+#define __RX_CACHEMAP_H__
 #include "common/platform.h"
 #include "common/MemCache.h"
 #include "common/Lock.h"
@@ -103,4 +103,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__CACHEMAP_H__
+#endif //__RX_CACHEMAP_H__

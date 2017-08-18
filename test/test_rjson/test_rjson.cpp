@@ -11,6 +11,7 @@
 #include <pthread.h>
 
 using namespace std;
+USING_RELAX_NAMESPACE
 
 unsigned long get_time()
 {

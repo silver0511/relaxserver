@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__BASE_CONFIG_H__
-#define __RX__BASE_CONFIG_H__
+#ifndef __RX_BASE_CONFIG_H__
+#define __RX_BASE_CONFIG_H__
 #include "common/platform.h"
 #include "common/BaseFun.h"
 #include "rjson/JsonParser.h"
@@ -28,7 +28,7 @@ RELAX_NAMESPACE_BEGIN
     private:
         int m_elapsed_time;                         //current elapsed time(ms)
         int m_read_interval;                        //read interval time(ms)
-        const char *m_read_file_name;               //config file absolutely path
+        string m_read_file_name;                    //config file absolutely path
     };
 
     class ServerConfig : public BaseConfig
@@ -57,4 +57,4 @@ RELAX_NAMESPACE_BEGIN
     };
 RELAX_NAMESPACE_END
 
-#endif //__RX__BASE_CONFIG_H__
+#endif //__RX_BASE_CONFIG_H__

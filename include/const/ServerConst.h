@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__SERVER_CONST_H__
-#define __RX__SERVER_CONST_H__
+#ifndef __RX_SERVER_CONST_H__
+#define __RX_SERVER_CONST_H__
 #include "stdafx.h"
 
 RELAX_NAMESPACE_BEGIN
@@ -33,4 +33,4 @@ RELAX_NAMESPACE_BEGIN
     };
 
 RELAX_NAMESPACE_END
-#endif //__RX__SERVER_CONST_H__
+#endif //_RX__SERVER_CONST_H__

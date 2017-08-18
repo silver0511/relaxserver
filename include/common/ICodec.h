@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__ICODEC_H__
-#define __RX__ICODEC_H__
+#ifndef __RX_ICODEC_H__
+#define __RX_ICODEC_H__
 
 #include "common/platform.h"
 
@@ -48,4 +48,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__ICODEC_H__
+#endif //__RX_ICODEC_H__

@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__MEMCACHE_H__
-#define __RX__MEMCACHE_H__
+#ifndef __RX_MEMCACHE_H__
+#define __RX_MEMCACHE_H__
 
 #include "common/platform.h"
 #include "common/BaseFun.h"
@@ -365,4 +365,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__MEMCACHE_H__
+#endif //__RX_MEMCACHE_H__

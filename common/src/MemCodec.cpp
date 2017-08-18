@@ -373,7 +373,7 @@ long MemCodec::codec(wchar_t *value)
     }
     else
     {
-        l_head_val = (ushort)wcslen(value);
+        l_head_val = (ushort)wcslen((const wchar_t *)value);
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t) + l_head_size))
             throw (-1);
 
@@ -491,13 +491,13 @@ long MemCodec::codec(wstring &value)
         wchar_t* l_wchar_value = new wchar_t[l_head_val + 1];
         l_wchar_value[l_head_val] = 0;
         l_head_val = l_head_val * sizeof(wchar_t);
-        memcpy((char *)value, m_buffer + m_cur_pos, l_head_val);
+        memcpy((char *)l_wchar_value, m_buffer + m_cur_pos, l_head_val);
         value = l_wchar_value;
         SAFE_DELETE_ARRAY(l_wchar_value);
     }
     else
     {
-        l_head_val = (ushort)wcslen(value);
+        l_head_val = (ushort)wcslen(value.c_str());
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t) + l_head_size))
             throw (-1);
 

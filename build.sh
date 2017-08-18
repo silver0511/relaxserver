@@ -20,7 +20,7 @@ function Build()
     cd $2
     BEGIN_TIME=`date +%s`
 
-    make && make install
+    make clean && make && make install
     cd -
     END_TIME=`date +%s`
 

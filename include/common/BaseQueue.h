@@ -3,8 +3,8 @@
  * file_detail:base link
  * created by silver0511
  */
-#ifndef __RX__BASE_QUEUE_H__
-#define __RX__BASE_QUEUE_H__
+#ifndef __RX_BASE_QUEUE_H__
+#define __RX_BASE_QUEUE_H__
 
 #include <stdlib.h>
 #include "common/platform.h"
@@ -600,4 +600,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__BASE_QUEUE_H__
+#endif //__RX_BASE_QUEUE_H__

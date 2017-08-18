@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__LOGTRACE_H__
-#define __RX__LOGTRACE_H__
+#ifndef __RX_LOGTRACE_H__
+#define __RX_LOGTRACE_H__
 
 #include <fstream>
 #include "common/platform.h"
@@ -241,4 +241,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__LOGTRACE_H__
+#endif //__RX_LOGTRACE_H__

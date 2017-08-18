@@ -3,8 +3,8 @@
  * file_detail:macro definitions, provides for external calls
  * created by silver0511
  */
-#ifndef __RX__LOGMACRO_H__
-#define __RX__LOGMACRO_H__
+#ifndef __RX_LOGMACRO_H__
+#define __RX_LOGMACRO_H__
 
 #include "common/LogTrace.h"
 
@@ -40,4 +40,4 @@ extern LogTrace g_log_trace;
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__LOGMACRO_H__
+#endif //__RX_LOGMACRO_H__

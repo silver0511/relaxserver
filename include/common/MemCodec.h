@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__MEMCODEC_H__
-#define __RX__MEMCODEC_H__
+#ifndef __RX_MEMCODEC_H__
+#define __RX_MEMCODEC_H__
 
 #include "common/ICodec.h"
 
@@ -43,7 +43,7 @@ RELAX_NAMESPACE_BEGIN
         virtual void seek(uint pos) { m_cur_pos = pos; }
         //return current cursor pos
         virtual uint get_pos() { return m_cur_pos; }
-        virtual ubyte *get_buf(){return m_buffer};
+        virtual ubyte *get_buf(){ return m_buffer; }
 
     private:
         //user for [int64, ulong, ushort ......]
@@ -101,4 +101,4 @@ RELAX_NAMESPACE_END
 
 
 
-#endif //__RX__MEMCODEC_H__
+#endif //__RX_MEMCODEC_H__

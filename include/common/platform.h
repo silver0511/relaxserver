@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__PLATFORM_H__
-#define __RX__PLATFORM_H__
+#ifndef __RX_PLATFORM_H__
+#define __RX_PLATFORM_H__
 
 #include <iostream>
 #include <string>
@@ -141,4 +141,4 @@ typedef uint64		SERVERID;	//server id
 
 RELAX_NAMESPACE_END
 
-#endif /* __RX__PLATFORM_H__ */
+#endif /* __RX_PLATFORM_H__ */

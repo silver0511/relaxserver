@@ -33,11 +33,16 @@ cp -rf ./config ./bin/debug
 cp -rf ./config ./bin/release
 
 #copy third_party
+#bin
 rm -rf ./bin/debug/third_party
 rm -rf ./bin/release/third_party
-cp -rf ./third_party ./bin/debug
-cp -rf ./third_party ./bin/release
-
+cp -rf ./third_party/bin ./bin/debug/third_party
+cp -rf ./third_party/bin ./bin/release/third_party
+#lib
+rm -rf ./lib/debug/third_party
+rm -rf ./lib/release/third_party
+cp -rf ./third_party/lib ./lib/debug/third_party
+cp -rf ./third_party/lib ./lib/release/third_party
 
 date
 if [ -z $COMPILE_TYPE ];

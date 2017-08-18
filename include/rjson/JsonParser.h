@@ -3,8 +3,8 @@
  * file_detail:json parse helper
  * created by silver0511
  */
-#ifndef __RX__JSONPARSER_H__
-#define __RX__JSONPARSER_H__
+#ifndef __RX_JSONPARSER_H__
+#define __RX_JSONPARSER_H__
 
 #include <string>
 #include <cstdio>
@@ -16,6 +16,9 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/error/en.h"
+#include "stdafx.h"
+
+RELAX_NAMESPACE_BEGIN
 
 typedef rapidjson::Value RJsonValue;
 typedef rapidjson::Document RJDocument;
@@ -444,4 +447,6 @@ private:
     }
 };
 
-#endif //__RX__JSONPARSER_H__
+RELAX_NAMESPACE_END
+
+#endif //__RX_JSONPARSER_H__

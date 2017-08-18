@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__BASE_THREAD_H__
-#define __RX__BASE_THREAD_H__
+#ifndef __RX_BASE_THREAD_H__
+#define __RX_BASE_THREAD_H__
 
 #include<stdlib.h>
 #include <pthread.h>
@@ -53,4 +53,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__BASE_THREAD_H__
+#endif //__RX_BASE_THREAD_H__

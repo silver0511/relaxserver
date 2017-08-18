@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__BASE_FUN_H__
-#define __RX__BASE_FUN_H__
+#ifndef __RX_BASE_FUN_H__
+#define __RX_BASE_FUN_H__
 #include "common/platform.h"
 using namespace std;
 
@@ -50,7 +50,7 @@ RELAX_NAMESPACE_BEGIN
         }
     }
 
-    std::string get_app_path()
+    inline std::string get_app_path()
     {
         char l_app_path[256] = {0};
         char l_full_path[256] = {0};
@@ -74,7 +74,7 @@ RELAX_NAMESPACE_BEGIN
         return l_ret_path;
     }
 
-    std::string get_full_path(char *file_name)
+    inline std::string get_full_path(char *file_name)
     {
         if(NULL == file_name)
         {
@@ -86,7 +86,7 @@ RELAX_NAMESPACE_BEGIN
         return l_full_path;
     }
 
-    void *load_lib(const char *lib_name)
+    inline void *load_lib(const char *lib_name)
     {
         if(NULL == lib_name)
         {
@@ -103,7 +103,7 @@ RELAX_NAMESPACE_BEGIN
         return l_handle;
     }
 
-    bool free_lib(void *handle)
+    inline bool free_lib(void *handle)
     {
         if(NULL == handle)
         {
@@ -115,7 +115,7 @@ RELAX_NAMESPACE_BEGIN
         return result;
     }
 
-    void *get_func(void *handle, const char *func_name)
+    inline void *get_func(void *handle, const char *func_name)
     {
         if(NULL == handle || NULL == func_name || 0 >= strlen(func_name))
         {
@@ -150,7 +150,7 @@ RELAX_NAMESPACE_BEGIN
         return inet_ntoa(addr);
     }
 
-    IPTYPE get_ip_by_host(const char *host_name)
+    inline IPTYPE get_ip_by_host(const char *host_name)
     {//
         if (NULL == host_name)
             return 0;
@@ -172,7 +172,7 @@ RELAX_NAMESPACE_BEGIN
 
 
     //support ipv4
-    string get_intranet_ip()
+    inline string get_intranet_ip()
     {
         struct ifaddrs *stru_if_addr = NULL;
         void * addr_ptr = NULL;
@@ -222,4 +222,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__BASE_FUN_H__
+#endif //__RX_BASE_FUN_H__

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef __RX__SYSTEM_H__
-#define __RX__SYSTEM_H__
+#ifndef __RX_SYSTEM_H__
+#define __RX_SYSTEM_H__
 #include "common/platform.h"
 
 RELAX_NAMESPACE_BEGIN
@@ -35,4 +35,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__SYSTEM_H__
+#endif //__RX_SYSTEM_H__

@@ -4,6 +4,6 @@ project(test)
 set(CMAKE_CXX_STANDARD 11)
 
 #rjson
-add_subdirectory(rjson)
+add_subdirectory(test_rjson)
 #common
-add_subdirectory(common)
+add_subdirectory(test_common)

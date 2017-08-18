@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__LOCK_H__
-#define __RX__LOCK_H__
+#ifndef __RX_LOCK_H__
+#define __RX_LOCK_H__
 #include <pthread.h>
 #include <unistd.h>
 #include "common/platform.h"
@@ -72,4 +72,4 @@ LockHelper l_lock_helper(T)
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__LOCK_H__
+#endif //__RX_LOCK_H__

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef __RX__LOGCONST_H__
-#define __RX__LOGCONST_H__
+#ifndef __RX_LOGCONST_H__
+#define __RX_LOGCONST_H__
 
 #include "stdafx.h"
 
@@ -40,4 +40,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__LOGCONST_H__
+#endif //__RX_LOGCONST_H__

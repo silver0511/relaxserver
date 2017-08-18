@@ -4,8 +4,8 @@
  * created by silver0511
  */
 
-#ifndef __RX__STDAFX_H__
-#define __RX__STDAFX_H__
+#ifndef __RX_STDAFX_H__
+#define __RX_STDAFX_H__
 
 #ifndef RELAX_NAMESPACE
     #define RELAX_NAMESPACE relax
@@ -49,4 +49,4 @@ RELAX_NAMESPACE_BEGIN
 
 RELAX_NAMESPACE_END
 
-#endif //__RX__STDAFX_H__
+#endif //__RX_STDAFX_H__

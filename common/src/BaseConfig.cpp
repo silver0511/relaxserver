@@ -9,7 +9,7 @@ USING_RELAX_NAMESPACE
 
 BaseConfig::BaseConfig():m_read_interval(30 * 1000),
                          m_elapsed_time(0),
-                         m_read_file_name(NULL)
+                         m_read_file_name("")
 {
 
 }
@@ -26,14 +26,16 @@ bool BaseConfig::load(const char *file_name)
         return false;
     }
 
-    if(NULL == m_read_file_name)
+    if(m_read_file_name.empty())
     {
-        m_read_file_name = (get_app_path() + file_name).c_str();
+        m_read_file_name = get_app_path();
+        m_read_file_name += file_name;
+        printf("\n[BaseConfig load] full_path: %s \n", m_read_file_name.c_str());
     }
-    bool result = JsonParse::parse_file(m_document, m_read_file_name);
+    bool result = JsonParse::parse_file(m_document, m_read_file_name.c_str());
     if(!result || m_document.IsNull())
     {
-        printf("\nread config file %s invalid\n", m_read_file_name);
+        printf("\n[BaseConfig load] read config file %s invalid\n", m_read_file_name.c_str());
         return false;
     }
 
@@ -46,7 +48,7 @@ bool BaseConfig::check_event(int elapsed_time)
     if(m_elapsed_time > m_read_interval)
     {
         m_elapsed_time = 0;
-        load(m_read_file_name);
+        load(m_read_file_name.c_str());
         dynamic_read();
     }
     return false;
@@ -77,7 +79,7 @@ bool ServerConfig::read()
 {
     if(m_document.IsNull())
     {
-        printf("\nconfig file not load\n");
+        printf("\n[BaseConfig read] config file not load\n");
         return false;
     }
 
@@ -109,7 +111,7 @@ void ServerConfig::get_dump()
 {
     printf("[ServerConfig get_dump] log_level:%d, nio_threads:%d, deal_threads:%d, max_con:%d, "
                    "white_ips:%s, rpc_con:%d, rpc_con_threads:%d, rpc_recv_threads:%d, "
-                   "rpc_recv_threads:%d, rpc_deal_threads:%d \n\n", m_log_level, m_nio_threads,
+                   "rpc_recv_threads:%d\n\n", m_log_level, m_nio_threads,
            m_deal_threads, m_max_con, m_white_ips.c_str(), m_rpc_con, m_rpc_con_threads,
            m_rpc_recv_threads, m_rpc_deal_threads);
 }
