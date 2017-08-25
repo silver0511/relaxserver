@@ -8,6 +8,7 @@
 #define __RX_LOGTRACE_H__
 
 #include <fstream>
+#include <libgen.h>
 #include "common/platform.h"
 #include "const/LogConst.h"
 #include "common/Lock.h"
@@ -165,7 +166,7 @@ RELAX_NAMESPACE_BEGIN
                 return *this;
 
             int l_size = (int)strlen(value);
-            if(l_size + m_cur_size > DEF_ONCE_LOG_BUFFER_SIZE)
+            if(l_size <= 0 || l_size + m_cur_size > DEF_ONCE_LOG_BUFFER_SIZE)
                 return *this;
 
             memcpy(m_log_buffer + m_cur_size, value, l_size);
@@ -179,12 +180,13 @@ RELAX_NAMESPACE_BEGIN
             if(m_cur_size >= DEF_ONCE_LOG_BUFFER_SIZE)
                 return *this;
 
-            int l_size = wcslen(value);
-            if(l_size + m_cur_size > DEF_ONCE_LOG_BUFFER_SIZE)
+            int l_size = wcslen(value) * sizeof(wchar_t);
+            if(l_size <= 0 || l_size + m_cur_size > DEF_ONCE_LOG_BUFFER_SIZE)
                 return *this;
-
-            memcpy(m_log_buffer + m_cur_size, value, l_size);
-            m_cur_size += l_size;
+//            wcout << value << endl;
+            int ret = wcstombs(m_log_buffer + m_cur_size, value, l_size);
+            if(ret > 0)
+                m_cur_size += ret;
 
             return *this;
         }
@@ -203,6 +205,7 @@ RELAX_NAMESPACE_BEGIN
         virtual ~LogTrace();
 
         void init(int type, int level, const char *file_name);
+        void close(){stop();}
 
         S_LOG_BUFFER *write_begin(int level, const char *func_name,
                                   const char *file_name, int line);

@@ -8,8 +8,13 @@
 
 USING_RELAX_NAMESPACE
 
+LogTrace g_log_trace;
+
 LogTrace::LogTrace() : m_cache_pool(DEF_LOG_TRACE_COUNT)
 {
+//    ios_base::sync_with_stdio(false);
+//    wcout.imbue(locale(""));
+    setlocale(LC_ALL, "en_US.UTF-8");
     clear();
 }
 
@@ -42,10 +47,8 @@ void LogTrace::init(int type, int level, const char *file_name)
     m_level = level;
 
     file_name = file_name ? file_name : "undefined_file";
-    snprintf(m_file_name, FILE_NAME_LENGTH, "%s%s_", get_app_path().c_str(),
+    snprintf(m_file_name, FILE_NAME_LENGTH, "%s%s%s", get_app_path().c_str(),
     "log/", file_name);
-
-    strncpy(m_file_name, file_name, FILE_NAME_LENGTH);
 
     if(m_type != DEF_DISPLAY_TYPE_CONSOLE)
     {
@@ -79,14 +82,13 @@ S_LOG_BUFFER *LogTrace::write_begin(int level, const char *func_name, const char
     file_name = file_name ? file_name : "undefined_file";
     func_name = func_name ? func_name : "undefined_func";
 
-    snprintf(l_data, 512, "%d %04d%02d%02d %02d:%02d:%02d-%03d %s:%03d",
-             get_thread_id(),
+    snprintf(l_data, 512, "%u %d %04d%02d%02d %02d:%02d:%02d-%03d %s [%s:%s:%d]",
+             m_count, get_thread_id(),
              s_local_tm.tm_year + 1900, s_local_tm.tm_mon + 1, s_local_tm.tm_mday,
              s_local_tm.tm_hour, s_local_tm.tm_min, s_local_tm.tm_sec, milli_time,
-             file_name, line);
+             get_str_level(level), basename((char *)file_name), func_name, line);
 
-    (*l_buffer) << m_count << " " << l_data << " " << get_str_level(level)
-                << " " << func_name << " ";
+    (*l_buffer) << l_data << " ";
     return l_buffer;
 }
 
@@ -109,7 +111,7 @@ void LogTrace::create_new_log_file()
     struct tm s_local_tm = {0};
     System::get_local_time(s_local_tm);
 
-    snprintf(l_file_name, FILE_NAME_LENGTH, "%s_%4d%02d%02d_%02d:%02d:%02d_%d.log",
+    snprintf(l_file_name, FILE_NAME_LENGTH, "%s_%4d%02d%02d_%02d%02d%02d_%d.log",
              m_file_name, (1900 + s_local_tm.tm_year),
              (1 + s_local_tm.tm_mon), s_local_tm.tm_mday,
              s_local_tm.tm_hour, s_local_tm.tm_min,s_local_tm.tm_sec,
@@ -120,7 +122,7 @@ void LogTrace::create_new_log_file()
     m_log_stream.open(l_file_name);
     m_log_stream << endl;
 
-    printf("create new log file:%s \n\r", l_file_name);
+    printf("create new log file:%s \n", l_file_name);
 }
 
 const char *LogTrace::get_str_level(int level)

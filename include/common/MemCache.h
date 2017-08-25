@@ -158,7 +158,7 @@ RELAX_NAMESPACE_BEGIN
             T *value = m_data_list[m_head_index];
             m_data_list[m_head_index] = NULL;
             m_count--;
-            m_head_index = inc_index(m_head_index, 1, m_head_index);
+            m_head_index = inc_index(m_head_index, 1, m_max_count);
 
             return value;
         }
@@ -332,7 +332,7 @@ RELAX_NAMESPACE_BEGIN
             T *value = m_data_list[m_head_index];
             m_data_list[m_head_index] = NULL;
             m_count--;
-            m_head_index = inc_index(m_head_index, 1, m_head_index);
+            m_head_index = inc_index(m_head_index, 1, m_max_count);
 
             return value;
         }

@@ -18,10 +18,10 @@ RELAX_NAMESPACE_BEGIN
         BaseThread();
         ~BaseThread();
 
-        bool begin_thread(void (*start_func)(void *) = NULL, void *param = NULL);
+        bool begin_thread(bool release_thread = false, void (*start_func)(void *) = NULL, void *param = NULL);
         void terminate()
         {
-            if(NULL != m_handle)
+            if(0 != m_handle)
                 pthread_cancel(m_handle);
         }
 
@@ -42,6 +42,7 @@ RELAX_NAMESPACE_BEGIN
         pthread_t       m_handle;
         void            *m_user_data;
         void            (*m_thread_func)(void *);
+        bool            m_release_thread;
     };
 
     class ThreadHelper

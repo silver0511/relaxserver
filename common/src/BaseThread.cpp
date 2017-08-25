@@ -21,11 +21,12 @@ BaseThread::~BaseThread()
     m_user_data = NULL;
 }
 
-bool BaseThread::begin_thread(void (*start_func)(void *), void *param)
+bool BaseThread::begin_thread(bool release_thread, void (*start_func)(void *), void *param)
 {
     int result = 0;
     m_thread_func = start_func;
     m_user_data = param;
+    m_release_thread = release_thread;
     result = pthread_create(&m_handle, NULL, thread_proc, this);
     if(0 != result)
     {
@@ -68,7 +69,10 @@ void* BaseThread::thread_proc(void *ptr)
     p_this->m_run = false;
     p_this->release();
 
-    SAFE_DELETE(p_this);
+    if(p_this->m_release_thread)
+    {
+        SAFE_DELETE(p_this);
+    }
 
     return NULL;
 }
@@ -76,5 +80,5 @@ void* BaseThread::thread_proc(void *ptr)
 bool ThreadHelper::begin_thread(void (*start_func)(void *), void *param)
 {
     BaseThread *base_thread = new BaseThread();
-    base_thread->begin_thread(start_func, param);
+    base_thread->begin_thread(true, start_func, param);
 }

@@ -7,18 +7,19 @@
 #ifndef __RX_BASE_FUN_H__
 #define __RX_BASE_FUN_H__
 #include "common/platform.h"
+#include <linux/unistd.h>
 using namespace std;
 
 RELAX_NAMESPACE_BEGIN
 
 #ifdef __NR_gettid
     //syscall0(int, gettid)
-    static int gettid ()
+    inline int gettid ()
     {
         return syscall(__NR_gettid);
     }
 #else
-    static int gettid()
+    inline int gettid()
     {
         return -ENOSYS;
     }
@@ -132,9 +133,9 @@ RELAX_NAMESPACE_BEGIN
         return l_func;
     }
 
-    inline int get_thread_id()
+    inline ulong get_thread_id()
     {
-        return gettid();
+        return (ulong)gettid();
     }
 
     inline pid_t get_cur_proc_id()

@@ -8,11 +8,8 @@
 
 #include "common/LogTrace.h"
 
-RELAX_NAMESPACE_BEGIN
-
 #ifdef TRACE_LOG
-
-extern LogTrace g_log_trace;
+extern RELAX_NAMESPACE::LogTrace g_log_trace;
 #define LOG_INIT(a_type, a_level, a_app_name) \
     g_log_trace.init(a_type, a_level, a_app_name);
 
@@ -27,9 +24,9 @@ extern LogTrace g_log_trace;
         }\
     }
 
-#define LOG_SET_LEVEL(a_level) {g_log_trace.set_level(a_level)};
+#define LOG_SET_LEVEL(a_level) g_log_trace.set_level(a_level);
 
-#define LOG_CLOSE() {g_log_trace.close();}
+#define LOG_CLOSE() g_log_trace.close();
 
 #else
 #define LOG_INIT(a_type, a_level, a_app_name)
@@ -38,6 +35,5 @@ extern LogTrace g_log_trace;
 #define LOG_CLOSE()
 #endif
 
-RELAX_NAMESPACE_END
 
 #endif //__RX_LOGMACRO_H__
