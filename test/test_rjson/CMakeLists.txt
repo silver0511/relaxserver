@@ -9,7 +9,8 @@ include_directories(${COMPILE_ROOT_PATH}/network/nett/src)
 set(RJSON_TEST test_rjson.cpp)
 LINK_DIRECTORIES(${STATIC_LIB_OUTPUT_PATH} ${SHARED_LIB_OUTPUT_PATH})
 add_executable(test_rjson ${RJSON_TEST})
-target_link_libraries(test_rjson -lpthread -ldl common.a nett.so)
+#target_link_libraries(test_rjson -lpthread -ldl common.a nett.so)
+target_link_libraries(test_rjson -lpthread -ldl common.a)
 
 #TARGETS:可执行文件
 #PROGRAMS:非目标文件的可执行程序(比如脚本)

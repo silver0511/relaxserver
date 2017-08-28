@@ -1,14 +1,12 @@
-//
-// Created by shiyunjie on 2017/6/2.
-//
+/*
+ * file_name: test_rjson.h
+ * file_detail:test json interface
+ * created by silver0511
+ */
 
 #include "rjson/JsonParser.h"
 #include "common/platform.h"
-#include "common/BaseQueue.h"
 #include "common/BaseFun.h"
-#include "TcpManager.h"
-#include <sys/time.h>
-#include <pthread.h>
 
 using namespace std;
 USING_RELAX_NAMESPACE
@@ -222,8 +220,6 @@ int main()
 //        pthread_create(&lthread, NULL, aaa, 0);
 //    }
 
-//    TcpManager tcp_manager;
-//    cout << "tcp test: " << tcp_manager.test() << endl;
     getchar();
     return 1;
 }

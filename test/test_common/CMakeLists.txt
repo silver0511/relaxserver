@@ -7,3 +7,4 @@ message(STATUS "COMMON TEST COMPILE_ROOT_PATH " ${COMPILE_ROOT_PATH})
 
 add_subdirectory(test_config)
 add_subdirectory(test_log_trace)
+add_subdirectory(test_thread)

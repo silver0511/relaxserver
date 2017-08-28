@@ -37,11 +37,11 @@ RELAX_NAMESPACE_BEGIN
 
     protected:
         bool m_run;
+        void            *m_user_data;
+        void            (*m_thread_func)(void *);
 
     private:
         pthread_t       m_handle;
-        void            *m_user_data;
-        void            (*m_thread_func)(void *);
         bool            m_release_thread;
     };
 
