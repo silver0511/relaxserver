@@ -3,7 +3,7 @@ project(test_log_trace)
 
 set(CMAKE_CXX_STANDARD 11)
 
-message(STATUS "COMMON TEST COMPILE_ROOT_PATH " ${COMPILE_ROOT_PATH})
+message(STATUS "start prepare test_log_trace......")
 include_directories(${COMPILE_ROOT_PATH}/include)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -g -ggdb -Wall -fPIC")
@@ -18,8 +18,8 @@ endif()
 
 LINK_DIRECTORIES(${STATIC_LIB_OUTPUT_PATH} ${SHARED_LIB_OUTPUT_PATH})
 
-set(LOG_TRACE_TEST test_log_trace.cpp)
-add_executable(test_log_trace ${LOG_TRACE_TEST})
+set(TEST_SOURCE test_log_trace.cpp)
+add_executable(test_log_trace ${TEST_SOURCE})
 target_link_libraries(test_log_trace -lpthread -ldl common.a)
 
 #TARGETS:可执行文件

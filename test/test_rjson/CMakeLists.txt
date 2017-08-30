@@ -4,11 +4,12 @@ project(test_rjson)
 set(CMAKE_CXX_STANDARD 11)
 
 message(STATUS "JSON TEST COMPILE_ROOT_PATH " ${COMPILE_ROOT_PATH})
+message(STATUS "start prepare test_rjson......")
 include_directories(${COMPILE_ROOT_PATH}/network/nett/src)
 
-set(RJSON_TEST test_rjson.cpp)
+set(TEST_SOURCE test_rjson.cpp)
 LINK_DIRECTORIES(${STATIC_LIB_OUTPUT_PATH} ${SHARED_LIB_OUTPUT_PATH})
-add_executable(test_rjson ${RJSON_TEST})
+add_executable(test_rjson ${TEST_SOURCE})
 #target_link_libraries(test_rjson -lpthread -ldl common.a nett.so)
 target_link_libraries(test_rjson -lpthread -ldl common.a)
 

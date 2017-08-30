@@ -1,6 +1,6 @@
 /*
- * file_name: test_log_trace.h
- * file_detail:test log trace interface
+ * file_name: test_thread.cpp
+ * file_detail:test thread interface
  * created by silver0511
  */
 #include "common/System.h"
@@ -78,6 +78,7 @@ public:
         STRU_TRHEAD_CONTEXT *thread_context = (STRU_TRHEAD_CONTEXT *)ptr;
         TestThreadClass *p_test_thread2 = (TestThreadClass *)thread_context->m_this;
         p_test_thread2->TestThreadProc(thread_context->m_thread_index);
+        SAFE_DELETE(thread_context);
     }
 
     void TestThreadProc(int index)

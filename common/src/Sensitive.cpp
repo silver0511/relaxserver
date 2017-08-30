@@ -96,8 +96,9 @@ bool Sensitive::exists(const string &text)
     return false;
 }
 
-bool Sensitive::replace(const string &in_text, string &out_text)
+int Sensitive::replace(const string &in_text, string &out_text)
 {
+    int c_count = 0;
     int cur_index = 0;
     bool is_sensitive = false;
     bool is_last_sensitive = false;
@@ -110,6 +111,7 @@ bool Sensitive::replace(const string &in_text, string &out_text)
             out_text += in_text.substr(cur_index, f_word_size);
             cur_index += f_word_size;
             is_last_sensitive = false;
+            c_count++;
         }
         else
         {
@@ -117,6 +119,7 @@ bool Sensitive::replace(const string &in_text, string &out_text)
             if(!is_last_sensitive)
             {
                 out_text += DEF_REPLACE_WORD;
+                c_count++;
             }
 
             if(cur_index == offset)
@@ -132,7 +135,7 @@ bool Sensitive::replace(const string &in_text, string &out_text)
         }
     }
 
-    return is_sensitive;
+    return c_count;
 }
 
 void Sensitive::init()

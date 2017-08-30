@@ -1,6 +1,7 @@
 /*
  * file_name: MemCodec.h
  * file_detail:implementation memory decoder and encoder
+ *             it is prepare for network translate
  * created by silver0511
  */
 
@@ -18,7 +19,6 @@ RELAX_NAMESPACE_BEGIN
         MemCodec(ubyte *buffer, ulong buf_len, ENUM_TYPE type);
         ~MemCodec();
 
-    public:
     public:
         //encode and decode
         virtual long codec(bool &value);
@@ -40,7 +40,6 @@ RELAX_NAMESPACE_BEGIN
         virtual long codec(string &value);
         virtual long codec(wstring &value);
 
-        virtual void seek(uint pos) { m_cur_pos = pos; }
         //return current cursor pos
         virtual uint get_pos() { return m_cur_pos; }
         virtual ubyte *get_buf(){ return m_buffer; }
@@ -92,7 +91,6 @@ RELAX_NAMESPACE_BEGIN
     private:
         ubyte   *m_buffer;
         ulong   m_cur_pos;
-        ulong   m_data_len;
         ulong   m_buf_len;
         bool    m_big_endian;
     };

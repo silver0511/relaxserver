@@ -9,7 +9,7 @@
 RELAX_NAMESPACE_BEGIN
 
 #define DEF_SENSITIVE_CONFIG "./config/sensitive_words.json"
-#define DEF_REPLACE_WORD 	"**"
+#define DEF_REPLACE_WORD 	"*"
 
     class S_T_NODE
     {
@@ -36,7 +36,7 @@ RELAX_NAMESPACE_BEGIN
 
     public:
         bool exists(const string &text);
-        bool replace(const string &in_text, string &out_text);
+        int replace(const string &in_text, string &out_text);
 
     private:
         void init();

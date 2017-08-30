@@ -13,7 +13,6 @@ MemCodec::MemCodec(relax::ubyte *buffer, relax::ulong buf_len, relax::ICodec::EN
     m_buffer = buffer;
     m_buf_len = buf_len;
     m_type = type;
-    m_data_len = 0;
     m_cur_pos = 0;
 
     if(m_type != READ && m_type != WRITE)
@@ -31,7 +30,6 @@ MemCodec::~MemCodec()
 {
     m_buffer = NULL;
     m_buf_len = 0;
-    m_data_len = 0;
     m_cur_pos = 0;
 }
 
@@ -45,9 +43,6 @@ long MemCodec::codec(bool &value)
         memcpy(&value, m_buffer + m_cur_pos, l_size);
     else
         memcpy(m_buffer + m_cur_pos, &value, l_size);
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
 
     m_cur_pos += l_size;
 
@@ -65,9 +60,6 @@ long MemCodec::codec(byte &value)
     else
         memcpy(m_buffer + m_cur_pos, &value, l_size);
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -83,9 +75,6 @@ long MemCodec::codec(ubyte &value)
         memcpy(&value, m_buffer + m_cur_pos, l_size);
     else
         memcpy(m_buffer + m_cur_pos, &value, l_size);
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
 
     m_cur_pos += l_size;
 
@@ -110,9 +99,6 @@ long MemCodec::codec(short &value)
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -135,9 +121,6 @@ long MemCodec::codec(ushort &value)
         l_temp_val = func_hton<ushort>(value);
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
 
     m_cur_pos += l_size;
 
@@ -162,9 +145,6 @@ long MemCodec::codec(int &value)
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -187,9 +167,6 @@ long MemCodec::codec(uint &value)
         l_temp_val = func_hton<uint>(value);
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
 
     m_cur_pos += l_size;
 
@@ -214,9 +191,6 @@ long MemCodec::codec(int64 &value)
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -239,9 +213,6 @@ long MemCodec::codec(uint64 &value)
         l_temp_val = func_hton<uint64>(value);
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
 
     m_cur_pos += l_size;
 
@@ -266,9 +237,6 @@ long MemCodec::codec(float &value)
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -292,9 +260,6 @@ long MemCodec::codec(double &value)
         memcpy(m_buffer + m_cur_pos, &l_temp_val, l_size);
     }
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_size;
-
     m_cur_pos += l_size;
 
     return l_size;
@@ -311,36 +276,30 @@ long MemCodec::codec(char *value)
     {
         //read head
         memcpy(&l_head_val, m_buffer + m_cur_pos, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
 
         m_cur_pos += l_head_size;
 
         //read body
         if(m_buf_len < (m_cur_pos + l_head_val))
-            throw (-1);
+            throw (-2);
 
-        memcpy(value, m_buffer + m_data_len, l_head_val);
+        memcpy(value, m_buffer + m_cur_pos, l_head_val);
         value[l_head_val] = 0;
     }
     else
     {
         l_head_val = (ushort)strlen(value);
         if(m_buf_len < (m_cur_pos + l_head_val + l_head_size))
-            throw (-1);
+            throw (-2);
 
         //write head
         memcpy(m_buffer + m_cur_pos, &l_head_val, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
+
         m_cur_pos += l_head_size;
 
         //write body
-        memcpy(m_buffer + m_data_len, value, l_head_val);
+        memcpy(m_buffer + m_cur_pos, value, l_head_val);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_head_val;
 
     m_cur_pos += l_head_val;
 
@@ -358,38 +317,32 @@ long MemCodec::codec(wchar_t *value)
     {
         //read head
         memcpy(&l_head_val, m_buffer + m_cur_pos, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
 
         m_cur_pos += l_head_size;
 
         //read body
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t)))
-            throw (-1);
+            throw (-2);
 
         l_head_val = l_head_val * sizeof(wchar_t);
-        memcpy((char *)value, m_buffer + m_data_len, l_head_val);
+        memcpy((char *)value, m_buffer + m_cur_pos, l_head_val);
         value[l_head_val] = 0;
     }
     else
     {
         l_head_val = (ushort)wcslen((const wchar_t *)value);
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t) + l_head_size))
-            throw (-1);
+            throw (-2);
 
         //write head
         memcpy(m_buffer + m_cur_pos, &l_head_val, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
+
         m_cur_pos += l_head_size;
 
         l_head_val = l_head_val * sizeof(wchar_t);
         //write body
-        memcpy(m_buffer + m_data_len, (char *)value, l_head_val);
+        memcpy(m_buffer + m_cur_pos, (char *)value, l_head_val);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_head_val;
 
     m_cur_pos += l_head_val;
 
@@ -398,24 +351,39 @@ long MemCodec::codec(wchar_t *value)
 
 long MemCodec::codec(ubyte *value, uint &buf_len)
 {
-    if((buf_len == 0) || m_buf_len < (m_cur_pos + buf_len))
+    uint l_head_size = sizeof(uint);
+    if(m_buf_len < (m_cur_pos + l_head_size))
         throw(-1);
 
     if(m_type == READ)
     {
-        memcpy(&value, m_buffer + m_cur_pos, buf_len);
+        //read_head
+        memcpy(&buf_len, m_buffer + m_cur_pos, l_head_size);
+
+        m_cur_pos += l_head_size;
+
+        //read body
+        if(m_buf_len < (m_cur_pos + buf_len))
+            throw (-2);
+
+        memcpy(value, m_buffer + m_cur_pos, buf_len);
     }
     else
     {
-        memcpy(m_buffer + m_cur_pos, &value, buf_len);
-    }
+        if(m_buf_len < (m_cur_pos + buf_len + l_head_size))
+            throw (-2);
 
-    if(m_cur_pos == m_data_len)
-        m_data_len += buf_len;
+        //write head
+        memcpy(m_buffer + m_cur_pos, &buf_len, l_head_size);
+        m_cur_pos += l_head_size;
+
+        //write body
+        memcpy(m_buffer + m_cur_pos, value, buf_len);
+    }
 
     m_cur_pos += buf_len;
 
-    return buf_len;
+    return (buf_len + l_head_size);
 }
 
 long MemCodec::codec(string &value)
@@ -429,14 +397,12 @@ long MemCodec::codec(string &value)
     {
         //read head
         memcpy(&l_head_val, m_buffer + m_cur_pos, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
 
         m_cur_pos += l_head_size;
 
         //read body
         if(m_buf_len < (m_cur_pos + l_head_val))
-            throw (-1);
+            throw (-2);
 
         char *l_char_value = new char[l_head_val + 1];
         zero_memory(l_char_value, l_head_val + 1);
@@ -448,20 +414,16 @@ long MemCodec::codec(string &value)
     {
         l_head_val = (ushort)value.size();
         if(m_buf_len < (m_cur_pos + l_head_val + l_head_size))
-            throw (-1);
+            throw (-2);
 
         //write head
         memcpy(m_buffer + m_cur_pos, &l_head_val, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
+
         m_cur_pos += l_head_size;
 
         //write body
         memcpy(m_buffer + m_cur_pos, value.c_str(), l_head_val);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_head_val;
 
     m_cur_pos += l_head_val;
 
@@ -479,14 +441,12 @@ long MemCodec::codec(wstring &value)
     {
         //read head
         memcpy(&l_head_val, m_buffer + m_cur_pos, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
 
         m_cur_pos += l_head_size;
 
         //read body
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t)))
-            throw (-1);
+            throw (-2);
 
         wchar_t* l_wchar_value = new wchar_t[l_head_val + 1];
         l_wchar_value[l_head_val] = 0;
@@ -499,21 +459,17 @@ long MemCodec::codec(wstring &value)
     {
         l_head_val = (ushort)wcslen(value.c_str());
         if(m_buf_len < (m_cur_pos + l_head_val * sizeof(wchar_t) + l_head_size))
-            throw (-1);
+            throw (-2);
 
         //write head
         memcpy(m_buffer + m_cur_pos, &l_head_val, l_head_size);
-        if(m_cur_pos == m_data_len)
-            m_data_len += l_head_size;
+
         m_cur_pos += l_head_size;
 
         l_head_val = l_head_val * sizeof(wchar_t);
         //write body
-        memcpy(m_buffer + m_data_len, (char *)value.c_str(), l_head_val);
+        memcpy(m_buffer + m_cur_pos, (char *)value.c_str(), l_head_val);
     }
-
-    if(m_cur_pos == m_data_len)
-        m_data_len += l_head_val;
 
     m_cur_pos += l_head_val;
 

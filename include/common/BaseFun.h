@@ -75,7 +75,7 @@ RELAX_NAMESPACE_BEGIN
         return l_ret_path;
     }
 
-    inline std::string get_full_path(char *file_name)
+    inline std::string get_full_path(const char *file_name)
     {
         if(NULL == file_name)
         {

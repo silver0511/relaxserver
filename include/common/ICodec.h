@@ -41,7 +41,8 @@ RELAX_NAMESPACE_BEGIN
         virtual long codec(string &value) = 0;
         virtual long codec(wstring &value) = 0;
 
-        virtual void seek(uint pos) = 0;
+        virtual uint get_pos() = 0;
+        virtual ubyte *get_buf() = 0;
     protected:
         ENUM_TYPE   m_type;
     };
