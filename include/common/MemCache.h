@@ -1,6 +1,14 @@
 /*
  * file_name: MemCache.h
  * file_detail:memory cache pool
+ * notice: T'constructor will be call only once when call init function
+ *         T'destructor will be call only once when call clear function
+ *         malloc_cache() and free_cache() will not call T'constructor and
+ *         destructor except cache size bigger than max cache size, it will
+ *         be new and delete.
+ *         so if you want destructor and destructor your class[or struct]
+ *         each time when malloc_cache() or free_cache() you can call your self
+ *         function.
  * created by silver0511
  */
 
@@ -40,7 +48,7 @@ RELAX_NAMESPACE_BEGIN
         {
             if(NULL != m_data_list)
             {
-                printf("\n init CachePool is not null exsists memory leak.\n");
+                printf("[CachePool] init one more time so exists memory leak.\n");
             }
 
             m_max_count = max_count;
@@ -87,11 +95,12 @@ RELAX_NAMESPACE_BEGIN
             if(NULL == data)
             {
                 data = malloc_buffer();
+                printf("[CachePool] cache is not enough so malloc_buffer() \n");
             }
 
             if(inc_buffer(data) != 1)
             {
-                assert(false && "CachePool malloc_cache one buffer more than one times");
+                assert(false && "[CachePool] malloc_cache one buffer more than one times");
             }
 
             return data;
@@ -106,13 +115,13 @@ RELAX_NAMESPACE_BEGIN
 
             if(dec_buffer(value) != 0)
             {
-                assert(false && "CachePool free_cache one buffer more than one times");
+                assert(false && "[CachePool] free_cache one buffer more than one times");
                 return false;
             }
 
             if(!push_back(value))
             {
-                //printf("\ncache pool is full so free\n");
+                printf("[CachePool] cache is full so free_buffer()\n");
                 free_buffer(value);
             }
         }
@@ -150,7 +159,7 @@ RELAX_NAMESPACE_BEGIN
         }
         inline T *pop_front()
         {
-            if(m_count < 0)
+            if(m_count <= 0)
             {
                 return NULL;
             }
@@ -212,7 +221,7 @@ RELAX_NAMESPACE_BEGIN
         {
             if(NULL != m_data_list)
             {
-                printf("\n init CachePool is not null exsists memory leak.\n");
+                printf("[CachePool_S] init one more time so exists memory leak.\n");
             }
 
             m_max_count = max_count;
@@ -260,11 +269,12 @@ RELAX_NAMESPACE_BEGIN
             if(NULL == data)
             {
                 data = malloc_buffer();
+                printf("[CachePool_S] cache is not enough so malloc_buffer() \n");
             }
 
             if(inc_buffer(data) != 1)
             {
-                assert(false && "CachePool_S malloc_cache one buffer more than one times");
+                assert(false && "[CachePool_S] malloc_cache one buffer more than one times");
             }
 
             return data;
@@ -279,13 +289,13 @@ RELAX_NAMESPACE_BEGIN
 
             if(dec_buffer(value) != 0)
             {
-                assert(false && "CachePool_S free_cache one buffer more than one times");
+                assert(false && "[CachePool_S] free_cache one buffer more than one times");
                 return false;
             }
 
             if(!push_back(value))
             {
-                //printf("\ncache pool is full so free\n");
+                printf("[CachePool_S] cache is full so free_buffer()\n");
                 free_buffer(value);
             }
         }
@@ -324,7 +334,7 @@ RELAX_NAMESPACE_BEGIN
         inline T *pop_front()
         {
             LOCK_HELPER(m_lock);
-            if(m_count < 0)
+            if(m_count <= 0)
             {
                 return NULL;
             }
