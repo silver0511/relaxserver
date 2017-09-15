@@ -4,26 +4,32 @@
 
 #ifndef __RX_CACHEMAP_H__
 #define __RX_CACHEMAP_H__
+
+#include <map>
 #include "common/platform.h"
 #include "common/MemCache.h"
 #include "common/Lock.h"
 
 RELAX_NAMESPACE_BEGIN
 
+    enum E_MAP_TYPE
+    {
+        TREE_MAP,
+        HASH_MAP
+    };
+
     template<typename T_ID, class T_VALUE>
     class CacheMap
     {
     public:
-        typedef class rx_hash_map<T_ID, T_VALUE*> RefCacheMap;
-        typedef typename rx_hash_map<T_ID, T_VALUE*>::iterator RefCacheIter;
+        typedef class rx_hash_map<T_ID, T_VALUE*> RefHashMap;
+        typedef typename rx_hash_map<T_ID, T_VALUE*>::iterator RefHashMapIter;
+
+        typedef class std::map<T_ID, T_VALUE*> RefTreeMap;
+        typedef typename std::map<T_ID, T_VALUE*>::iterator RefTreeMapIter;
 
         CacheMap()
         {
-        }
-
-        CacheMap(uint max_size)
-        {
-            init(max_size);
         }
 
         virtual ~CacheMap()
@@ -31,72 +37,197 @@ RELAX_NAMESPACE_BEGIN
             clear();
         }
 
-        virtual void init(uint max_size = RX_DEFAULT_CACHE_SIZE)
+        virtual void init(uint max_size = RX_DEFAULT_CACHE_SIZE, E_MAP_TYPE map_type = HASH_MAP, bool safe_thread = true)
         {
             LOCK_HELPER(m_lock);
             m_cache_pool.init(max_size);
-            m_map.clear();
+            m_hash_map.clear();
+            m_tree_map.clear();
+            m_map_type = map_type;
+            m_safe = safe_thread;
+            assert(m_map_type == HASH_MAP || m_map_type == TREE_MAP);
         }
 
         virtual void clear()
         {
-            LOCK_HELPER(m_lock);
-            m_map.clear();
-            m_cache_pool.clear();
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                clear_impl();
+            }
+            else
+            {
+                clear_impl();
+            }
         }
 
         T_VALUE *malloc_node()
         {
-            LOCK_HELPER(m_lock);
-            T_VALUE *value = m_cache_pool.malloc_cache();
-            return value;
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                T_VALUE *value = m_cache_pool.malloc_cache();
+                return value;
+            }
+            else
+            {
+                T_VALUE *value = m_cache_pool.malloc_cache();
+                return value;
+            }
         }
 
         inline bool add(const T_ID ref_id, T_VALUE *ref_value)
         {
             assert(NULL != ref_value);
-            LOCK_HELPER(m_lock);
-            RefCacheIter iter = m_map.find(ref_id);
-            if(iter != m_map.end())
-                return false;
-
-            m_map.insert(make_pair(ref_id, ref_value));
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                return add_impl(ref_id, ref_value);
+            }
+            else
+            {
+                return add_impl(ref_id, ref_value);
+            }
         }
 
         inline bool remove(const T_ID &ref_id)
         {
-            LOCK_HELPER(m_lock);
-            RefCacheIter iter = m_map.find(ref_id);
-            if(iter == m_map.end())
-                return false;
-
-            T_VALUE *value = iter->second;
-            m_map.erase(value);
-            assert(NULL != value);
-
-            m_cache_pool.free_cache(value);
-
-            return true;
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                return remove_impl(ref_id);
+            }
+            else
+            {
+                return remove_impl(ref_id);
+            }
         }
 
         inline T_VALUE *get(const T_ID &ref_id)
         {
-            LOCK_HELPER(m_lock);
-            RefCacheIter iter = m_map.find(ref_id);
-            if(iter == m_map.end())
-                return NULL;
-
-            return iter->second;
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                return get_impl(ref_id);
+            }
+            else
+            {
+                return get_impl(ref_id);
+            }
         }
 
         inline uint size()
         {
-            return static_cast<uint>(m_map.size());
+            if(m_safe)
+            {
+                LOCK_HELPER(m_lock);
+                return size_impl();
+            }
+            else
+            {
+                return size_impl();
+            }
         }
 
+    private:
+        void clear_impl()
+        {
+            m_hash_map.clear();
+            m_tree_map.clear();
+            m_cache_pool.clear();
+        }
+
+        inline bool add_impl(const T_ID ref_id, T_VALUE *ref_value)
+        {
+            if(m_map_type == HASH_MAP)
+            {
+                RefHashMapIter iter = m_hash_map.find(ref_id);
+                if(iter != m_hash_map.end())
+                    return false;
+
+                m_hash_map.insert(make_pair(ref_id, ref_value));
+            }
+            else
+            {
+                RefTreeMapIter iter = m_tree_map.find(ref_id);
+                if(iter != m_tree_map.end())
+                    return false;
+
+                m_tree_map.insert(make_pair(ref_id, ref_value));
+            }
+
+            return true;
+        }
+
+        inline bool remove_impl(const T_ID &ref_id)
+        {
+            if(m_map_type == HASH_MAP)
+            {
+                RefHashMapIter iter = m_hash_map.find(ref_id);
+                if(iter == m_hash_map.end())
+                    return false;
+
+                T_VALUE *value = iter->second;
+                assert(NULL != value);
+                m_hash_map.erase(iter);
+
+                m_cache_pool.free_cache(value);
+            }
+            else
+            {
+                RefTreeMapIter iter = m_tree_map.find(ref_id);
+                if(iter == m_tree_map.end())
+                    return false;
+
+                T_VALUE *value = iter->second;
+                assert(NULL != value);
+                m_tree_map.erase(iter);
+
+                m_cache_pool.free_cache(value);
+            }
+
+            return true;
+        }
+
+        inline T_VALUE *get_impl(const T_ID &ref_id)
+        {
+            if(m_map_type == HASH_MAP)
+            {
+                RefHashMapIter iter = m_hash_map.find(ref_id);
+                if(iter == m_hash_map.end())
+                    return NULL;
+
+                return iter->second;
+            }
+            else
+            {
+                RefTreeMapIter iter = m_tree_map.find(ref_id);
+                if(iter == m_tree_map.end())
+                    return NULL;
+
+                return iter->second;
+            }
+        }
+
+        inline uint size_impl()
+        {
+            int size = 0;
+            if(m_map_type == HASH_MAP)
+            {
+                size = static_cast<uint>(m_hash_map.size());
+            }
+            else
+            {
+                size = static_cast<uint>(m_tree_map.size());
+            }
+            return size;
+        }
     protected:
+        bool                    m_safe;
         Lock                    m_lock;
-        RefCacheMap             m_map;
+        E_MAP_TYPE              m_map_type;
+        RefHashMap              m_hash_map;
+        RefTreeMap              m_tree_map;
     private:
         CachePool<T_VALUE>      m_cache_pool;           //not thread safe
     };

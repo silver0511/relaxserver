@@ -23,8 +23,15 @@ RELAX_NAMESPACE_BEGIN
     public:
         struct S_QUEUE_NODE
         {
+            byte m_cached;
             T *m_data;
             S_QUEUE_NODE *m_next;
+            S_QUEUE_NODE()
+            {
+                m_cached = 0;
+                m_data = NULL;
+                m_next = NULL;
+            }
         };
 
         inline Queue()
@@ -44,7 +51,7 @@ RELAX_NAMESPACE_BEGIN
             clear();
         }
 
-        inline void init(uint max_cache_count = RX_DEFAULT_CACHE_SIZE, bool thread_safe = true)
+        virtual void init(uint max_cache_count = RX_DEFAULT_CACHE_SIZE, bool thread_safe = true)
         {
             if(m_inited)
             {
@@ -52,6 +59,7 @@ RELAX_NAMESPACE_BEGIN
                 throw;
             }
 
+            m_count = 0;
             m_max_cache_count = max_cache_count;
             m_safe = thread_safe;
             if(m_max_cache_count > 0)
@@ -60,6 +68,7 @@ RELAX_NAMESPACE_BEGIN
                 {
                     S_QUEUE_NODE *node = new S_QUEUE_NODE;
                     node->m_next = m_cache_node;
+                    node->m_cached = 1;
                     m_cache_node = node;
                 }
             }
@@ -165,7 +174,7 @@ RELAX_NAMESPACE_BEGIN
 
         inline void free_node(S_QUEUE_NODE *node)
         {
-            if(m_count > m_max_cache_count)
+            if(node->m_cached != 1)
             {
                 SAFE_DELETE(node);
             }
@@ -283,6 +292,14 @@ RELAX_NAMESPACE_BEGIN
             S_DQUEUE_NODE *m_next;
             S_DQUEUE_NODE *m_prev;
             T             *m_data;
+            byte           m_cached;
+            S_DQUEUE_NODE()
+            {
+                m_next = NULL;
+                m_prev = NULL;
+                m_data = NULL;
+                m_cached = 0;
+            }
         };
 
         inline DoubleQueue()
@@ -310,6 +327,7 @@ RELAX_NAMESPACE_BEGIN
                 throw;
             }
 
+			m_count = 0;
             m_max_cache_count = max_cache_count;
             m_safe = thread_safe;
             if(m_max_cache_count > 0)
@@ -319,6 +337,7 @@ RELAX_NAMESPACE_BEGIN
                     S_DQUEUE_NODE *node = new S_DQUEUE_NODE;
                     node->m_next = m_cache_node;
                     node->m_prev = NULL;
+                    node->m_cached = 1;
                     m_cache_node = node;
                 }
             }
@@ -572,7 +591,7 @@ RELAX_NAMESPACE_BEGIN
         }
         inline void free_node(S_DQUEUE_NODE *node)
         {
-            if(m_count > m_max_cache_count)
+            if(node->m_cached != 1)
             {
                 SAFE_DELETE(node);
             }
@@ -596,7 +615,6 @@ RELAX_NAMESPACE_BEGIN
         S_DQUEUE_NODE       *m_tail;
         S_DQUEUE_NODE       *m_cache_node;
     };
-
 
 RELAX_NAMESPACE_END
 

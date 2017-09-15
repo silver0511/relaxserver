@@ -1,5 +1,5 @@
 /*
- * file_name: test_memcodec.cpp
+ * file_name: test_mem_codec.cpp
  * file_detail:test MemCodec.h interface
  * created by silver0511
  */
