@@ -16,20 +16,47 @@ RELAX_NAMESPACE_BEGIN
     public:
         System();
         ~System();
-        //millisecond
+        /**
+         * thread sleep
+         * @param ms_time time of millisecond
+         */
         static void sleep(ulong ms_time);
-        //microsecond
+        /**
+         * @return time of microsecond
+         */
         static int64 get_micro_time();
-        //millisecond
+        /**
+         * @return time of millisecond
+         */
         static int64 get_ms_time();
-        //second
+        /**
+         * @return time of second
+         */
         static time_t get_time();
-        //milli count
+        /**
+         * @return milli count
+         */
         static int get_ms_count();
-        //localtime
-        static void get_local_time(tm &s_local_time);
-        //random seed
+        /**
+         * @param s_local_time OUT struct of localtime
+         */
+        static void get_local_time(OUT tm &s_local_time);
+        /**
+         * init random seed
+         */
         static void init_random();
+        /**
+         * check utf-8 size
+         * @param word check condition
+         * @return one word size
+         */
+        static int check_utf_8(char word);
+        /**
+         * get word vector from a text
+         * @param text original text
+         * @param word_vec OUT param all of the words that the text has
+         */
+        static void get_word_vec(const string &text, OUT vector<string> &word_vec);
     private:
     };
 

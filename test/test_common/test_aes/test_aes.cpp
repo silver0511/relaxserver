@@ -17,7 +17,7 @@ int main()
     ubyte *input = new ubyte[before_encode.length()];
     zero_memory(input, input_length);
     memcpy(input, before_encode.c_str(), input_length);
-    printf("before encode message is: %s length:%d\n", input, input_length);
+    printf("before encode message is: %s length:%lu\n", input, input_length);
     AES aes_encode(key);
     aes_encode.Cipher(input, input_length);
     ulong output_length = input_length;
@@ -26,6 +26,6 @@ int main()
     memcpy(output, input, output_length);
     AES aes_decode(key);
     aes_decode.InvCipher(output, output_length);
-    printf("decoded message is:%s length:%d\n", output, output_length);
+    printf("decoded message is:%s length:%lu\n", output, output_length);
     return 1;
 }

@@ -62,3 +62,33 @@ void System::init_random()
     for(int i = 0; i < l_temp_rand; i++)
         rand();
 }
+
+int System::check_utf_8(char word)
+{
+    int size = 1;
+    if(word & 0x80)
+    {
+        word <<= 1;
+        do{
+            word <<= 1;
+            ++size;
+        }while(word & 0x80);
+    }
+    return size;
+}
+
+void System::get_word_vec(const string &text, vector<string> &word_vec)
+{
+    int l_offset = 0;
+    int l_text_size = text.size();
+    while (l_offset < l_text_size)
+    {
+        int l_word_size = check_utf_8(text[l_offset]);
+        if((l_offset + l_word_size) > l_text_size)
+        {
+            break;
+        }
+        word_vec.push_back(text.substr(l_offset, l_word_size));
+        l_offset += l_word_size;
+    }
+}

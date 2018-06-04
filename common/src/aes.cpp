@@ -70,27 +70,29 @@ void AES::InvCipher(char *input, char *output)
     ucharToStr(uch_input, output);
 }
 
-unsigned char* AES::Cipher(unsigned char* input, unsigned long length)
+unsigned char* AES::Cipher(unsigned char* input, long length)
 {
-    unsigned char* pinput = NULL;
+    if(length <= 16)
+        return input;
+
     for(int i = 0; i < (length - 16); i = i + 16)
     {
-        pinput = &(input[i]);
+        unsigned char* pinput = &(input[i]);
         Cipher(pinput);
-        pinput = NULL;
     }
     
     return input;
 }
 
-unsigned char* AES::InvCipher(unsigned char* input, unsigned long length)
+unsigned char* AES::InvCipher(unsigned char* input, long length)
 {
-    unsigned char* pinput = NULL;
+    if(length <= 16)
+        return input;
+
     for(int i = 0; i < (length - 16); i = i + 16)
     {
-        pinput = &(input[i]);
+        unsigned char* pinput = &(input[i]);
         InvCipher(pinput);
-        pinput = NULL;
     }
     
     return input;

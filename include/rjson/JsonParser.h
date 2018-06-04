@@ -25,27 +25,42 @@ typedef rapidjson::Document RJDocument;
 typedef rapidjson::Document::AllocatorType RJAllocType;
 typedef rapidjson::SizeType RJ_SIZE_TYPE;
 typedef rapidjson::Value::ConstValueIterator RJConstIterator;
-//创建空的根对象
-#define RJ_CREATE_EMPTY_DOCUMENT(root_name) \
-    RJDocument root_name; \
+typedef rapidjson::Value::ConstMemberIterator RJConstMemberIterator;
+typedef rapidjson::Value::Object    RJObject;
+typedef rapidjson::Value::Array     RJArray;
 
-//创建根(对象)
-#define RJ_CREATE_O_DOCUMENT(root_name, alloc_name) \
-    RJDocument root_name(rapidjson::kObjectType); \
-    RJAllocType& alloc_name = root_name.GetAllocator(); \
+/**
+ * 创建一个空的根(对象)
+ * 用于用户从字符串解码
+ */
+#define RJ_CREATE_EMPTY_DOCUMENT(ROOT_NAME) \
+    RJDocument ROOT_NAME; \
 
-//创建根(数组)
-#define RJ_CREATE_A_DOCUMENT(root_name, alloc_name) \
-    RJDocument root_name(rapidjson::kArrayType); \
-    RJAllocType& alloc_name = root_name.GetAllocator(); \
+/**
+ * 创建根(对象)
+ */
+#define RJ_CREATE_O_DOCUMENT(ROOT_NAME, ALLOC_NAME) \
+    RJDocument ROOT_NAME(rapidjson::kObjectType); \
+    RJAllocType& ALLOC_NAME = ROOT_NAME.GetAllocator(); \
 
-//创建子(对象)
-#define RJ_CREATE_OBJECT(value_name) \
-    RJsonValue value_name(rapidjson::kObjectType); \
+/**
+ * 创建根(数组)
+ */
+#define RJ_CREATE_A_DOCUMENT(ROOT_NAME, ALLOC_NAME) \
+    RJDocument ROOT_NAME(rapidjson::kArrayType); \
+    RJAllocType& ALLOC_NAME = ROOT_NAME.GetAllocator(); \
 
-//创建子(数组)
-#define RJ_CREATE_ARRAY(value_name) \
-    RJsonValue value_name(rapidjson::kArrayType); \
+/**
+ * 创建子(对象)
+ */
+#define RJ_CREATE_OBJECT(VALUE_NAME) \
+    RJsonValue VALUE_NAME(rapidjson::kObjectType); \
+
+/**
+ * 创建子(数组)
+ */
+#define RJ_CREATE_ARRAY(VALUE_NAME) \
+    RJsonValue VALUE_NAME(rapidjson::kArrayType); \
 
 class JsonParse
 {
@@ -53,9 +68,15 @@ public:
     JsonParse(){};
     ~JsonParse(){};
 
-    /*
-     * suport K_ID:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
-    */
+    /**
+     * 添加节点信息, json_value[key] = value
+     * 支持 K_ID类型:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
+     * @param json_value 需要加入的JSON节点
+     * @param key 添加的KEY字符串
+     * @param value 添加的value
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     template<typename K_ID>
     static bool add(RJsonValue &json_value, const char* key, const K_ID &value, RJAllocType& allocator_type)
     {
@@ -74,6 +95,14 @@ public:
         return true;
     }
 
+    /**
+     * 添加节点字符串信息, json_value[key] = value
+     * @param json_value 需要加入的JSON节点
+     * @param key 添加的KEY字符串
+     * @param value 添加的value字符串
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     static bool add(RJsonValue &json_value, const char* key, const std::string &value, RJAllocType& allocator_type)
     {
         if(!json_value.IsObject())
@@ -86,14 +115,22 @@ public:
             json_value.RemoveMember(key);
         }
 
-        rapidjson::Value p_name(rapidjson::kStringType);
-        p_name.SetString(key, allocator_type);
-        rapidjson::Value p_value(rapidjson::kStringType);
-        p_value.SetString(value.c_str(), (int)value.size(), allocator_type);
-        json_value.AddMember(p_name, p_value, allocator_type);
+        rapidjson::Value l_name(rapidjson::kStringType);
+        l_name.SetString(key, allocator_type);
+        rapidjson::Value l_value(rapidjson::kStringType);
+        l_value.SetString(value.c_str(), (int)value.size(), allocator_type);
+        json_value.AddMember(l_name, l_value, allocator_type);
         return true;
     }
 
+    /**
+     * 添加子节点信息, json_value[key] = value
+     * @param json_value 需要加入的JSON节点
+     * @param key 添加的KEY字符串
+     * @param value 添加的RJsonValue类型value
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     static bool add(RJsonValue &json_value, const char* key, RJsonValue &value, RJAllocType& allocator_type)
     {
         if (!json_value.IsObject())
@@ -110,27 +147,42 @@ public:
         return true;
     }
 
-    /*
-    * suport K_ID:[string, int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
-    */
+    /**
+     * 获取子节点信息
+     * 支持 K_ID类型:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
+     * @param json_value 需要获取的JSON根节点
+     * @param key KEY字符串
+     * @return K_ID 默认返回0
+     */
     template<typename K_ID>
-    static bool get(RJsonValue &json_value, const char* key, OUT K_ID &out_value)
+    static K_ID get(RJsonValue &json_value, const char* key)
     {
         if(!json_value.IsObject())
         {
-            return false;
+            return 0;
         }
 
-        auto iter = json_value.FindMember(key);
-        if(iter == json_value.MemberEnd())
+        auto l_iter = json_value.FindMember(key);
+        if(l_iter == json_value.MemberEnd())
         {
-            return false;
+            return 0;
         }
 
-        return get_value<K_ID>(iter->value, out_value);
+        K_ID l_out_value;
+        if(!get_value<K_ID>(l_iter->value, l_out_value))
+        {
+            return 0;
+        }
+        return l_out_value;
     }
 
-    //support string
+    /**
+     * 获取子节点信息[字符串]
+     * @param json_value 需要获取的JSON根节点
+     * @param key KEY字符串
+     * @param out_value 返回的字符串引用
+     * @return 是否存在[true or false]
+     */
     static bool get(RJsonValue &json_value, const char* key, OUT std::string &out_value)
     {
         if(!json_value.IsObject())
@@ -138,36 +190,51 @@ public:
             return false;
         }
 
-        auto iter = json_value.FindMember(key);
-        if(iter == json_value.MemberEnd())
+        auto l_iter = json_value.FindMember(key);
+        if(l_iter == json_value.MemberEnd())
         {
             return false;
         }
 
-        if(!iter->value.IsString())
+        if(!l_iter->value.IsString())
         {
             return false;
         }
 
-        out_value = iter->value.GetString();
+        out_value = l_iter->value.GetString();
         return true;
     }
 
-    //ps:外部必须通过引用去接，否则会swap原本的dom结构
-    //RJsonValue &p = get(...);
+    /**
+     * 获取子节点信息[RJsonValue]
+     * 注意:外部必须通过引用去接，否则会swap原本的dom结构
+     * 例子:RJsonValue &p = get(...);
+     * @param json_value 需要获取的JSON根节点
+     * @param key KEY字符串
+     * @return RJsonValue类型子节点
+     */
     static RJsonValue& get(RJsonValue &json_value, const char* key)
     {
-        assert(json_value.IsObject());
-        auto iter = json_value.FindMember(key);
-        if(iter == json_value.MemberEnd())
+        if(!json_value.IsObject())
         {
             return get_null();
         }
-        return iter->value;
+
+        auto l_iter = json_value.FindMember(key);
+        if(l_iter == json_value.MemberEnd())
+        {
+            return get_null();
+        }
+        return l_iter->value;
     }
 
 
-
+    /**
+     * 移除某一个节点
+     * @param json_value 需要获取的JSON根节点
+     * @param key KEY字符串
+     * @return 是否移除成功[true or false]
+     */
     static bool remove(RJsonValue &json_value, const char* key)
     {
         if(!json_value.IsObject())
@@ -175,12 +242,17 @@ public:
             return false;
         }
 
-        json_value.EraseMember(key);
+        return json_value.EraseMember(key);
     }
 
-    /*
-    * suport K_ID:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
-    */
+    /**
+     * 添加节点信息, json_value[index] = value
+     * 支持 K_ID类型:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
+     * @param json_value 需要加入的JSON节点[数组类型:json_value.IsArray()]
+     * @param value 添加的value
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     template<typename K_ID>
     static bool push(RJsonValue &json_value, const K_ID &value, RJAllocType& allocator_type)
     {
@@ -194,6 +266,13 @@ public:
         return true;
     }
 
+    /**
+     * 添加节点字符串信息, json_value[index] = value
+     * @param json_value 需要加入的JSON节点[数组类型:json_value.IsArray()]
+     * @param value 添加的value
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     static bool push(RJsonValue &json_value, const std::string &value, RJAllocType& allocator_type)
     {
         if(!json_value.IsArray())
@@ -201,13 +280,20 @@ public:
             return false;
         }
 
-        rapidjson::Value p_value(rapidjson::kStringType);
-        p_value.SetString(value.c_str(), value.size(), allocator_type);
-        json_value.PushBack(p_value, allocator_type);
+        rapidjson::Value l_value(rapidjson::kStringType);
+        l_value.SetString(value.c_str(), value.size(), allocator_type);
+        json_value.PushBack(l_value, allocator_type);
 
         return true;
     }
 
+    /**
+     * 添加节点信息, json_value[index] = value
+     * @param json_value 需要加入的JSON节点[数组类型:json_value.IsArray()]
+     * @param value 添加的value[RJsonValue类型]
+     * @param allocator_type 分配器[GetAllocator()]
+     * @return 添加成功或者失败[true or false]
+     */
     static bool push(RJsonValue &json_value, RJsonValue &value, RJAllocType& allocator_type)
     {
         if(!json_value.IsArray())
@@ -219,6 +305,11 @@ public:
         return true;
     }
 
+    /**
+     * 获取当前节点的大小
+     * @param json_value 需要获取的JSON节点[数组类型:json_value.IsArray()]
+     * @return 数组大小，不存在返回-1
+     */
     static RJ_SIZE_TYPE count(RJsonValue &json_value)
     {
         if(!json_value.IsArray())
@@ -229,26 +320,40 @@ public:
         return json_value.Size();
     }
 
-    /*
-    * suport K_ID:[string, int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
-    */
+    /**
+     * 从JSON数组中获取子节点信息
+     * 支持 K_ID类型:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
+     * @param json_value 需要获取的JSON根节点[数组类型:json_value.IsArray()]
+     * @param index 数组索引地址
+     * @return K_ID 默认返回0
+     */
     template<typename K_ID>
-    static bool at(RJsonValue &json_value, int index, OUT K_ID &out_value)
+    static K_ID at(RJsonValue &json_value, int index)
     {
         if(!json_value.IsArray())
         {
-            return false;
+            return 0;
         }
 
         if(index < 0 || index >= json_value.Size())
         {
-            return false;
+            return 0;
         }
-
-        return get_value<K_ID>(json_value[index], out_value);
+        K_ID l_out_value;
+        if(!get_value<K_ID>(json_value[index], l_out_value))
+        {
+            return 0;
+        }
+        return l_out_value;
     }
 
-    //support string
+    /**
+     * 从JSON数组中获取子节点字符串信息
+     * @param json_value 需要获取的JSON根节点[数组类型:json_value.IsArray()]
+     * @param index 数组索引地址
+     * @param out_value 返回的字符串引用
+     * @return 是否存在[true or false]
+     */
     static bool at(RJsonValue &json_value, int index, OUT std::string &out_value)
     {
         if(!json_value.IsArray())
@@ -270,11 +375,21 @@ public:
         return true;
     }
 
-    //ps:外部必须通过引用去接，否则会swap原本的dom结构
-    //RJsonValue &p = at(...);
+    /**
+     * 获取子节点信息[RJsonValue]
+     * 注意:外部必须通过引用去接，否则会swap原本的dom结构
+     * 例子:RJsonValue &p = at(...);
+     * @param json_value 需要获取的JSON根节点[数组类型:json_value.IsArray()]
+     * @param index 数组索引地址
+     * @return RJsonValue类型子节点
+     */
     static RJsonValue& at(RJsonValue &json_value, int index)
     {
-        assert(json_value.IsArray());
+        if(!json_value.IsArray())
+        {
+            return get_null();
+        }
+
         if(index < 0 || index >= json_value.Size())
         {
             return get_null();
@@ -283,6 +398,12 @@ public:
         return json_value[index];
     }
 
+    /**
+     * 删除子节点[RJsonValue]
+     * @param json_value 需要获取的JSON根节点[数组类型:json_value.IsArray()]
+     * @param index 数组索引地址
+     * @return 是否删除成功[true or false]
+     */
     static bool erase(RJsonValue &json_value, int index)
     {
         if(!json_value.IsArray())
@@ -295,12 +416,20 @@ public:
             return false;
         }
 
-        RJsonValue::ConstValueIterator beg = json_value.Begin();
-        RJsonValue::ConstValueIterator end = json_value.End();
-        json_value.Erase(beg + index);
+        RJsonValue::ConstValueIterator l_beg = json_value.Begin();
+//        RJsonValue::ConstValueIterator l_end = json_value.End();
+        json_value.Erase(l_beg + index);
+
+        return true;
     }
 
-    static bool parse(RJDocument &json_document, const char* data)
+    /**
+     * 解析成JSON对象
+     * @param json_document 通过RJ_CREATE_EMPTY_DOCUMENT宏创建的空对象,返回给外部使用
+     * @param data 需要解析的json字符串
+     * @return 是否解析成功[true or false]
+     */
+    static bool parse(OUT RJDocument &json_document, const char* data)
     {
         if(NULL == data)
         {
@@ -308,8 +437,8 @@ public:
         }
 
         json_document.Parse<0>(data);
-        bool has_error = json_document.HasParseError();
-        if(has_error)
+        bool l_has_error = json_document.HasParseError();
+        if(l_has_error)
         {
             fprintf(stderr, "\nparse Error(offset %u): %s\n",
                     (unsigned)json_document.GetErrorOffset(),
@@ -318,39 +447,45 @@ public:
 
         if(json_document.IsNull())
         {
-            has_error = true;
+            l_has_error = true;
         }
 
-        return !has_error;
+        return !l_has_error;
     }
 
-    static bool parse_file(RJDocument &json_document, const char* file_name)
+    /**
+     * 解析成JSON对象
+     * @param json_document 通过RJ_CREATE_EMPTY_DOCUMENT宏创建的空对象,返回给外部使用
+     * @param file_name 需要解析的json字符串对应的文件地址
+     * @return 是否解析成功[true or false]
+     */
+    static bool parse_file(OUT RJDocument &json_document, const char* file_name)
     {
         if(NULL == file_name)
         {
             return false;
         }
 
-        FILE* fp = fopen(file_name, "rb");
-        if(!fp)
+        FILE* l_fp = fopen(file_name, "rb");
+        if(!l_fp)
         {
             return false;
         }
 
-        fseek(fp,0,SEEK_END);
-        int buf_len = ftell(fp);
-        fseek(fp,0,SEEK_SET);
+        fseek(l_fp, 0, SEEK_END);
+        int l_buf_len = ftell(l_fp);
+        fseek(l_fp, 0, SEEK_SET);
 
-        printf("file_name = %s, read size = %d \n", file_name, buf_len);
+        printf("file_name = %s, read size = %d \n", file_name, l_buf_len);
 
-        char *buf = (char*)malloc(sizeof(char) * buf_len);
-        rapidjson::FileReadStream is(fp, buf, buf_len);
-        json_document.ParseStream(is);
-        fclose(fp);
-        free(buf);
+        char *l_buf = (char*)malloc(sizeof(char) * l_buf_len);
+        rapidjson::FileReadStream l_is(l_fp, l_buf, l_buf_len);
+        json_document.ParseStream(l_is);
+        fclose(l_fp);
+        free(l_buf);
 
-        bool has_error = json_document.HasParseError();
-        if(has_error)
+        bool l_has_error = json_document.HasParseError();
+        if(l_has_error)
         {
             fprintf(stderr, "\nparse_file Error(offset %u): %s\n",
                     (unsigned)json_document.GetErrorOffset(),
@@ -359,34 +494,76 @@ public:
 
         if(json_document.IsNull())
         {
-            has_error = true;
+            l_has_error = true;
         }
 
-        return !has_error;
+        return !l_has_error;
     }
 
-    static bool to_string(const RJsonValue& value, OUT std::string &out_value)
+    /**
+     * 把JSON对象转换成字符串
+     * @param json_value 需要转换的json对象
+     * @param out_value 转换之后的输出字符串
+     * @return 是否转换成功[true or false]
+     */
+    static bool to_string(const RJsonValue& json_value, OUT std::string &out_value)
     {
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        value.Accept(writer);
-        out_value = buffer.GetString();
+        rapidjson::StringBuffer l_buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> l_writer(l_buffer);
+        json_value.Accept(l_writer);
+        out_value = l_buffer.GetString();
         return true;
     }
 
-    static bool is_null(const RJsonValue &value)
+    /**
+     * 判断是否空的JSON对象
+     * @param json_value 需要判断的json对象
+     * @return 是否为空[true or false]
+     */
+    static bool is_null(const RJsonValue &json_value)
     {
-        return value.IsNull();
+        return json_value.IsNull();
     }
 
+    /**
+     * 获取JsonValue的Object对象
+     * @param json_value 需要获取的json对象
+     * @return 对应的Object对象
+     */
+    static RJObject get_object(RJsonValue &json_value)
+    {
+        if(!json_value.IsObject())
+        {
+            return get_empty_obj_value().GetObject();
+        }
+
+        return json_value.GetObject();
+    }
+
+    /**
+     * 获取JsonValue的Array对象
+     * @param json_value 需要获取的json对象
+     * @return 对应的Array对象
+     */
+    static RJArray get_array(RJsonValue &json_value)
+    {
+        if(!json_value.IsArray())
+        {
+            return get_empty_arr_value().GetArray();
+        }
+
+        return json_value.GetArray();
+    }
 private:
-    /*
-     * support K_ID:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
-    */
+    /**
+      * 获取节点信息
+      * 支持类型K_ID:[int, unsigned, bool, double, int64_t, uint64_t, int8_t, uint8_t, int16_t, uint16_t]
+      * 内部使用
+      */
     template<typename K_ID>
     static bool get_value(RJsonValue &json_value, OUT K_ID &out_value)
     {
-        bool result = true;
+        bool l_result = true;
         if(std::is_same<K_ID, int>::value && json_value.IsInt())
         {
             out_value = json_value.GetInt();
@@ -429,21 +606,47 @@ private:
         }
         else
         {
-            result = false;
+            l_result = false;
         }
 
-        return result;
+        return l_result;
     }
 
+    /**
+      * 判断节点是否存在
+      * 内部使用
+      */
     static bool has(RJsonValue &json_value, const char* key)
     {
         return json_value.HasMember(key);
     }
 
+    /**
+      * 生成一个空的节点
+      * 内部使用
+      */
     static RJsonValue& get_null()
     {
-        static RJsonValue null_value(rapidjson::kNullType);
-        return null_value;
+        static RJsonValue s_null_value(rapidjson::kNullType);
+        return s_null_value;
+    }
+
+    /** 生成一个empty object value
+     * 内部使用
+     */
+    static RJsonValue& get_empty_obj_value()
+    {
+        static RJsonValue s_empty_obj_value(rapidjson::kObjectType);
+        return s_empty_obj_value;
+    }
+
+    /** 生成一个empty array value
+     * 内部使用
+     */
+    static RJsonValue& get_empty_arr_value()
+    {
+        static RJsonValue s_empty_arr_value(rapidjson::kArrayType);
+        return s_empty_arr_value;
     }
 };
 

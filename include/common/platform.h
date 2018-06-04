@@ -24,13 +24,14 @@
 #include <sys/types.h>
 
 #include "stdafx.h"
-using namespace std;
-//hash_map
+//include stl
+#include <vector>
+#include <queue>
 #if __cplusplus > 199711L
 #include<unordered_map>
 #endif
 
-
+using namespace std;
 
 RELAX_NAMESPACE_BEGIN
 

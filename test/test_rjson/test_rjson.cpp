@@ -5,15 +5,13 @@
  */
 
 #include "rjson/JsonParser.h"
-#include "common/platform.h"
-#include "common/BaseFun.h"
+#include <sys/time.h>
 
 using namespace std;
 USING_RELAX_NAMESPACE
 
 unsigned long get_time()
 {
-    RELAX_NAMESPACE::inc_index(1,1,1);
     struct timeval now;
     gettimeofday(&now,NULL);
     unsigned long tv_sec = now.tv_sec;
@@ -92,35 +90,25 @@ void json_decode(RJDocument &doc, const char* data)
     string str_val;
     JsonParse::get(doc, "parent_str", str_val);
     assert(str_val == "i am parent str");
-    int int_val;
-    JsonParse::get<int>(doc, "parent_int", int_val);
+    int int_val = JsonParse::get<int>(doc, "parent_int");
     assert(int_val == 111);
-    unsigned unsigned_val;
-    JsonParse::get<unsigned>(doc, "parent_unsigned", unsigned_val);
+    unsigned unsigned_val = JsonParse::get<unsigned>(doc, "parent_unsigned");
     assert((unsigned_val == (unsigned)222));
-    bool b_val;
-    JsonParse::get<bool>(doc, "parent_bool", b_val);
+    bool b_val = JsonParse::get<bool>(doc, "parent_bool");
     assert(b_val == true);
-    double double_val;
-    JsonParse::get<double>(doc, "parent_double", double_val);
+    double double_val = JsonParse::get<double>(doc, "parent_double");
     assert(double_val == 333.33f);
-    int64_t  i64_val;
-    JsonParse::get<int64_t>(doc, "parent_int64", i64_val);
+    int64_t  i64_val = JsonParse::get<int64_t>(doc, "parent_int64");
     assert(i64_val == (int64_t)131239129381290);
-    uint64_t  ui64_val;
-    JsonParse::get<uint64_t>(doc, "parent_uint64_t", ui64_val);
+    uint64_t  ui64_val = JsonParse::get<uint64_t>(doc, "parent_uint64_t");
     assert(ui64_val == (uint64_t)-2);
-    int8_t int8_val;
-    JsonParse::get<int8_t>(doc, "parent_int8", int8_val);
+    int8_t int8_val = JsonParse::get<int8_t>(doc, "parent_int8");
     assert(int8_val == (int8_t)8);
-    uint8_t uint8_val;
-    JsonParse::get<uint8_t>(doc, "parent_uint8", uint8_val);
+    uint8_t uint8_val = JsonParse::get<uint8_t>(doc, "parent_uint8");
     assert(uint8_val == (uint8_t)-1);
-    int16_t int16_val;
-    JsonParse::get<int16_t>(doc, "parent_int16", int16_val);
+    int16_t int16_val = JsonParse::get<int16_t>(doc, "parent_int16");
     assert(int16_val == (int16_t)16);
-    uint16_t uint16_val;
-    JsonParse::get<uint16_t>(doc, "parent_uint16", uint16_val);
+    uint16_t uint16_val = JsonParse::get<uint16_t>(doc, "parent_uint16");
     assert(uint16_val == (uint16_t)-2);
 
     //内嵌对象1
@@ -128,7 +116,7 @@ void json_decode(RJDocument &doc, const char* data)
     assert(!child_object.IsNull());
     JsonParse::get(child_object, "child_str", str_val);
     assert(str_val == "i am child str");
-    JsonParse::get<int64_t>(child_object, "child_int64", i64_val);
+    i64_val = JsonParse::get<int64_t>(child_object, "child_int64");
     assert(i64_val == (int64_t)7342342777);
 
     //内嵌数组2->内嵌对象1
@@ -138,7 +126,7 @@ void json_decode(RJDocument &doc, const char* data)
     int data_count = JsonParse::count(child_array1);
     for (; i < data_count; ++i)
     {
-        JsonParse::at<int>(child_array1, i, int_val);
+        int_val = JsonParse::at<int>(child_array1, i);
         assert(int_val == i);
     }
 
@@ -150,7 +138,7 @@ void json_decode(RJDocument &doc, const char* data)
     }
     //c++11 support
     i = 0;
-    for (auto &v : child_array1.GetArray())
+    for (auto &v : JsonParse::get_array(child_array1))
     {
         assert(v.GetInt() == i);
         i++;
@@ -161,7 +149,7 @@ void json_decode(RJDocument &doc, const char* data)
     assert(!child_array.IsNull());
     JsonParse::at(child_array, 0, str_val);
     assert(str_val == "i am child array str");
-    JsonParse::at<uint64_t>(child_array, 1, ui64_val);
+    ui64_val = JsonParse::at<uint64_t>(child_array, 1);
     assert(ui64_val == (uint64_t)349234283);
 
     //内嵌数组2->内嵌数组1
@@ -169,7 +157,7 @@ void json_decode(RJDocument &doc, const char* data)
     assert(!child_array2.IsNull());
     JsonParse::at(child_array2, 0, str_val);
     assert(str_val == "i am child array2 str");
-    JsonParse::at<uint64_t>(child_array2, 1, ui64_val);
+    ui64_val = JsonParse::at<uint64_t>(child_array2, 1);
     assert(ui64_val == (uint64_t)88888888);
 
 
@@ -178,13 +166,27 @@ void json_decode(RJDocument &doc, const char* data)
     assert(!child_obj2.IsNull());
     JsonParse::get(child_obj2, "child4_str", str_val);
     assert(str_val == "i am child4 str");
-    JsonParse::get<int64_t>(child_obj2, "child4_int64", i64_val);
+    i64_val = JsonParse::get<int64_t>(child_obj2, "child4_int64");
     assert(i64_val == (int64_t)4234121211313);
+    for(auto &v : JsonParse::get_object(child_obj2))
+    {
+        string ss_name = v.name.GetString();
+        if(strncmp(ss_name.c_str(), "child4_str", ss_name.size()) == 0)
+        {
+            string ss_value = v.value.GetString();
+            assert(ss_value == "i am child4 str");
+        }
+
+        if(strncmp(ss_name.c_str(), "child4_int64", ss_name.size()) == 0)
+        {
+            assert(v.value.GetInt64() == (int64_t)4234121211313);
+        }
+    }
 
 
-    JsonParse::at(child_array, 4, uint8_val);
+    uint8_val = JsonParse::at<uint8_t>(child_array, 4);
     assert(uint8_val == (uint8_t)-10);
-    JsonParse::at(child_array, 5, int16_val);
+    int16_val = JsonParse::at<int16_t>(child_array, 5);
     assert(int16_val == (int16_t)27);
 }
 

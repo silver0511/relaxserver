@@ -10,9 +10,8 @@
 
 USING_RELAX_NAMESPACE
 
-S_T_NODE::S_T_NODE()
+S_T_NODE::S_T_NODE() : m_end(false), m_level(0), m_fail_pointer(NULL)
 {
-    m_end = false;
 }
 
 S_T_NODE::~S_T_NODE()
@@ -37,7 +36,7 @@ S_T_NODE *S_T_NODE::find(const string &key_word)
     return iter->second;
 }
 
-S_T_NODE *S_T_NODE::insert(const string &key_word)
+S_T_NODE *S_T_NODE::insert(const string &key_word, int level)
 {
     S_MAP_ITER iter = s_map.find(key_word);
     if(iter != s_map.end())
@@ -46,8 +45,42 @@ S_T_NODE *S_T_NODE::insert(const string &key_word)
     }
 
     S_T_NODE *new_node = new S_T_NODE();
+    new_node->m_level = level;
     s_map.insert(S_MAP::value_type(key_word, new_node));
     return new_node;
+}
+
+void S_T_NODE::create_fail_pointer(S_T_NODE *parent_node, OUT queue<S_T_NODE *> &trace_queue)
+{
+    S_T_NODE *l_fail_pointer = m_fail_pointer;
+    S_T_NODE::S_MAP_ITER l_iter = s_map.begin();
+    for(; l_iter != s_map.end(); ++l_iter)
+    {
+        S_T_NODE *l_child_node = l_iter->second;
+        trace_queue.push(l_child_node);
+
+        /**
+         * if: current child node's value can be founded in it's fail pointer's child
+         * then: set current child's fail pointer to that node
+         * else: search next fail pointer until null pointer then set current child's fail pointer to parent node
+         */
+        while(NULL != l_fail_pointer)
+        {
+            S_T_NODE *l_fail_node = l_fail_pointer->find(l_iter->first);
+            if(NULL != l_fail_node)
+            {
+                l_child_node->set_fail_pointer(l_fail_node);
+                break;
+            }
+
+            l_fail_pointer = l_fail_pointer->get_fail_pointer();
+        }
+
+        if(NULL == l_fail_pointer)
+        {
+            l_child_node->set_fail_pointer(parent_node);
+        }
+    }
 }
 
 void S_T_NODE::set_end()
@@ -65,13 +98,17 @@ int S_T_NODE::size()
     return s_map.size();
 }
 
-Sensitive::Sensitive()
+Sensitive::Sensitive() : m_replace_word(DEF_DEFAULT_REPLACE_WORD)
 {
-    init();
 }
 
 Sensitive::~Sensitive()
 {
+}
+
+void Sensitive::set_replace_word(const string &word)
+{
+    m_replace_word = word;
 }
 
 bool Sensitive::exists(const string &text)
@@ -80,17 +117,13 @@ bool Sensitive::exists(const string &text)
     while(cur_index < text.size())
     {
         int offset = cur_index;
-        int f_word_size = check_utf_8(text[offset]);
-        if(!check(&m_parent_node, text, offset))
-        {
-            offset = f_word_size;
-        }
-        else
+        int l_word_size = System::check_utf_8(text[offset]);
+        if(check(&m_parent_node, text, offset))
         {
             return true;
         }
 
-        cur_index = offset;
+        cur_index = l_word_size;
     }
 
     return false;
@@ -105,11 +138,11 @@ int Sensitive::replace(const string &in_text, string &out_text)
     while(cur_index < in_text.size())
     {
         int offset = cur_index;
-        int f_word_size = check_utf_8(in_text[offset]);
+        int l_word_size = System::check_utf_8(in_text[offset]);
         if(!check(&m_parent_node, in_text, offset))
         {
-            out_text += in_text.substr(cur_index, f_word_size);
-            cur_index += f_word_size;
+            out_text += in_text.substr(cur_index, l_word_size);
+            cur_index += l_word_size;
             is_last_sensitive = false;
             c_count++;
         }
@@ -118,14 +151,14 @@ int Sensitive::replace(const string &in_text, string &out_text)
             is_sensitive = true;
             if(!is_last_sensitive)
             {
-                out_text += DEF_REPLACE_WORD;
-                c_count++;
+                out_text += m_replace_word;
+                c_count += m_replace_word.size();
             }
 
             if(cur_index == offset)
             {
                 printf("[Sensitive] invalid offset: %d, text: %s \n", offset, in_text.c_str());
-                cur_index += f_word_size;
+                cur_index += l_word_size;
             }
             else
             {
@@ -138,30 +171,22 @@ int Sensitive::replace(const string &in_text, string &out_text)
     return c_count;
 }
 
-void Sensitive::init()
+void Sensitive::load_from_file(const string& file_name)
 {
-
-    printf("[Sensitive] parse json start: %lld \n", System::get_micro_time());
+    printf("[Sensitive load_from_file] parse json start: %lld \n", System::get_micro_time());
     RJ_CREATE_EMPTY_DOCUMENT(l_document)
-    bool result = JsonParse::parse_file(l_document, DEF_SENSITIVE_CONFIG);
+    bool result = JsonParse::parse_file(l_document, file_name.c_str());
     if(!result || l_document.IsNull())
     {
-        printf("[Sensitive] read json file invalid \n");
+        printf("[Sensitive load_from_file] read json file invalid \n");
         return;
     }
 
-    RJsonValue &json_data = JsonParse::at(l_document, 0);
-    if(json_data.IsNull())
-    {
-        printf("[Sensitive] read json data not array \n");
-        return;
-    }
-
-    RJsonValue &json_data_list = JsonParse::get(json_data, "data");
+    RJsonValue &json_data_list = JsonParse::get(l_document, "data");
     RJ_SIZE_TYPE data_count = JsonParse::count(json_data_list);
-    if(json_data.IsNull() || data_count <= 0)
+    if(data_count <= 0)
     {
-        printf("[Sensitive] read json data not exist \n");
+        printf("[Sensitive load_from_file] read json data not exist \n");
         return;
     }
 
@@ -179,57 +204,92 @@ void Sensitive::init()
             s_text = json_value.GetString();
         }
 
-        int w_index = 0;
-        S_T_NODE *p_cur_node = &m_parent_node;
-        string single_word;
-        while(w_index < s_text.size())
-        {
-            int f_word_size = check_utf_8(s_text[w_index]);
-            single_word = s_text.substr(w_index, f_word_size);
-            w_index += f_word_size;
-            p_cur_node = p_cur_node->insert(single_word);
-        }
-        if(s_text.size() > 0 && p_cur_node != &m_parent_node)
-        {
-            p_cur_node->set_end();
-        }
+        insert(s_text);
     }
 
-    printf("[Sensitive]  parse json end: %lld, parent_node size: %d \n", System::get_micro_time(), m_parent_node.size());
+    printf("[Sensitive load_from_file]  parse json end: %lld, parent_node size: %d \n", System::get_micro_time(), m_parent_node.size());
+    create_fail_pointer();
+    printf("[Sensitive load_from_file]  create failer point end: %lld \n", System::get_micro_time());
 }
 
-int Sensitive::check_utf_8(char word)
+void Sensitive::load_from_memory(vector<string> word_list)
 {
-    int size = 1;
-    if(word & 0x80)
+    printf("[Sensitive load_from_memory] parse start: %lld \n", System::get_micro_time());
+
+    for (int index = 0; index < word_list.size(); ++index)
     {
-        word <<= 1;
-        do{
-            word <<= 1;
-            ++size;
-        }while(word & 0x80);
+        insert(word_list[index]);
     }
-    return size;
+
+    printf("[Sensitive load_from_memory] parse end: %lld, parent_node size: %d \n", System::get_micro_time(), m_parent_node.size());
+    create_fail_pointer();
+    printf("[Sensitive load_from_memory]  create failer point end: %lld \n", System::get_micro_time());
 }
 
-bool Sensitive::check(S_T_NODE *s_t_node, const string &text, int &offset)
+void Sensitive::insert(const string &text)
+{
+    int l_index = 0;
+    S_T_NODE *l_cur_node = &m_parent_node;
+    string l_single_word;
+    int l_level = 1;
+    while(l_index < text.size())
+    {
+        l_single_word = get_single_word(text, l_index);
+        l_cur_node = l_cur_node->insert(l_single_word, l_level);
+        l_level++;
+    }
+    if(text.size() > 0 && l_cur_node != &m_parent_node)
+    {
+        l_cur_node->set_end();
+    }
+}
+
+void Sensitive::create_fail_pointer()
+{
+    queue<S_T_NODE *> l_trace_queue;
+    l_trace_queue.push(&m_parent_node);
+
+    S_T_NODE *l_cur_node = NULL;
+    while (!l_trace_queue.empty())
+    {
+        l_cur_node = l_trace_queue.front();
+        l_trace_queue.pop();
+        l_cur_node->create_fail_pointer(&m_parent_node, l_trace_queue);
+    }
+}
+
+
+string Sensitive::get_single_word(const string &text, int &offset)
+{
+    int l_word_size = System::check_utf_8(text[offset]);
+    string l_word = text.substr(offset, l_word_size);
+    offset += l_word_size;
+    return l_word;
+}
+
+bool Sensitive::check(S_T_NODE *s_t_node, const string &in_text, int &start_index, int &offset, OUT string &out_text)
 {
     if(s_t_node->is_end())
     {
-        //敏感词
+        //is sensitive
         return true;
     }
 
-    int word_size = check_utf_8(text[offset]);
-    string single_word = text.substr(offset, word_size);
-    offset += word_size;
+    string l_single_word = get_single_word(text, offset);
 
-    S_T_NODE *child_node = s_t_node->find(single_word);
-    if(NULL == child_node)
+    S_T_NODE *l_child_node = s_t_node->find(l_single_word);
+    if(NULL == l_child_node)
     {
-        //非敏感词
-        return false;
+        S_T_NODE *l_fail_node = s_t_node->get_fail_pointer();
+        if(l_fail_node == NULL)
+        {
+            //is not sensitive
+            return false;
+        }
+
+        start_index += l_fail_node->m_level;
+        return check(l_fail_node, text, start_index, offset);
     }
 
-    return check(child_node, text, offset);
+    return check(l_child_node, text, offset);
 }
