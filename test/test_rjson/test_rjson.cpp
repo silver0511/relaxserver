@@ -87,8 +87,7 @@ void json_decode(RJDocument &doc, const char* data)
 {
     JsonParse::parse(doc, data);
     //根对象解析
-    string str_val;
-    JsonParse::get(doc, "parent_str", str_val);
+    string str_val = JsonParse::get(doc, "parent_str", str_val);
     assert(str_val == "i am parent str");
     int int_val = JsonParse::get<int>(doc, "parent_int");
     assert(int_val == 111);
@@ -112,15 +111,15 @@ void json_decode(RJDocument &doc, const char* data)
     assert(uint16_val == (uint16_t)-2);
 
     //内嵌对象1
-    RJsonValue &child_object = JsonParse::get(doc, "child_obj");
+    RJsonValue &child_object = JsonParse::get_child(doc, "child_obj");
     assert(!child_object.IsNull());
-    JsonParse::get(child_object, "child_str", str_val);
+    str_val = JsonParse::get(child_object, "child_str");
     assert(str_val == "i am child str");
     i64_val = JsonParse::get<int64_t>(child_object, "child_int64");
     assert(i64_val == (int64_t)7342342777);
 
     //内嵌数组2->内嵌对象1
-    RJsonValue &child_array1 = JsonParse::get(child_object, "child_array1");
+    RJsonValue &child_array1 = JsonParse::get_child(child_object, "child_array1");
     //解析数组
     int i = 0;
     int data_count = JsonParse::count(child_array1);
@@ -145,26 +144,26 @@ void json_decode(RJDocument &doc, const char* data)
     }
 
     //内嵌数组1
-    RJsonValue &child_array = JsonParse::get(doc, "child_array");
+    RJsonValue &child_array = JsonParse::get_child(doc, "child_array");
     assert(!child_array.IsNull());
-    JsonParse::at(child_array, 0, str_val);
+    str_val = JsonParse::at(child_array, 0);
     assert(str_val == "i am child array str");
     ui64_val = JsonParse::at<uint64_t>(child_array, 1);
     assert(ui64_val == (uint64_t)349234283);
 
     //内嵌数组2->内嵌数组1
-    RJsonValue &child_array2 = JsonParse::at(child_array, 2);
+    RJsonValue &child_array2 = JsonParse::at_child(child_array, 2);
     assert(!child_array2.IsNull());
-    JsonParse::at(child_array2, 0, str_val);
+    str_val = JsonParse::at(child_array2, 0);
     assert(str_val == "i am child array2 str");
     ui64_val = JsonParse::at<uint64_t>(child_array2, 1);
     assert(ui64_val == (uint64_t)88888888);
 
 
     //内嵌对象2->内嵌数组1
-    RJsonValue &child_obj2 = JsonParse::at(child_array, 3);
+    RJsonValue &child_obj2 = JsonParse::at_child(child_array, 3);
     assert(!child_obj2.IsNull());
-    JsonParse::get(child_obj2, "child4_str", str_val);
+    str_val = JsonParse::get(child_obj2, "child4_str");
     assert(str_val == "i am child4 str");
     i64_val = JsonParse::get<int64_t>(child_obj2, "child4_int64");
     assert(i64_val == (int64_t)4234121211313);

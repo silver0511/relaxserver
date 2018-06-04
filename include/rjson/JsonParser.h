@@ -180,29 +180,27 @@ public:
      * 获取子节点信息[字符串]
      * @param json_value 需要获取的JSON根节点
      * @param key KEY字符串
-     * @param out_value 返回的字符串引用
-     * @return 是否存在[true or false]
+     * @return string value
      */
-    static bool get(RJsonValue &json_value, const char* key, OUT std::string &out_value)
+    static string get(RJsonValue &json_value, const char* key)
     {
         if(!json_value.IsObject())
         {
-            return false;
+            return "";
         }
 
         auto l_iter = json_value.FindMember(key);
         if(l_iter == json_value.MemberEnd())
         {
-            return false;
+            return "";
         }
 
         if(!l_iter->value.IsString())
         {
-            return false;
+            return "";
         }
 
-        out_value = l_iter->value.GetString();
-        return true;
+        return std::move(l_iter->value.GetString());
     }
 
     /**
@@ -213,7 +211,7 @@ public:
      * @param key KEY字符串
      * @return RJsonValue类型子节点
      */
-    static RJsonValue& get(RJsonValue &json_value, const char* key)
+    static RJsonValue& get_child(RJsonValue &json_value, const char* key)
     {
         if(!json_value.IsObject())
         {
@@ -351,28 +349,26 @@ public:
      * 从JSON数组中获取子节点字符串信息
      * @param json_value 需要获取的JSON根节点[数组类型:json_value.IsArray()]
      * @param index 数组索引地址
-     * @param out_value 返回的字符串引用
-     * @return 是否存在[true or false]
+     * @return string value
      */
-    static bool at(RJsonValue &json_value, int index, OUT std::string &out_value)
+    static string at(RJsonValue &json_value, int index)
     {
         if(!json_value.IsArray())
         {
-            return false;
+            return "";
         }
 
         if(index < 0 || index >= json_value.Size())
         {
-            return false;
+            return "";
         }
 
         if(!json_value[index].IsString())
         {
-            return false;
+            return "";
         }
 
-        out_value = json_value[index].GetString();
-        return true;
+        return std::move(json_value[index].GetString());
     }
 
     /**
@@ -383,7 +379,7 @@ public:
      * @param index 数组索引地址
      * @return RJsonValue类型子节点
      */
-    static RJsonValue& at(RJsonValue &json_value, int index)
+    static RJsonValue& at_child(RJsonValue &json_value, int index)
     {
         if(!json_value.IsArray())
         {
