@@ -16,7 +16,7 @@ RELAX_NAMESPACE_BEGIN
     {
     public:
         BaseThread();
-        ~BaseThread();
+        virtual ~BaseThread();
 
         bool begin_thread(bool release_thread = false, void (*start_func)(void *) = NULL, void *param = NULL);
         void terminate()

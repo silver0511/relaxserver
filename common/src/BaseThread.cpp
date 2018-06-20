@@ -71,7 +71,7 @@ void* BaseThread::thread_proc(void *ptr)
 
     if(p_this->m_release_thread)
     {
-        SAFE_DELETE(p_this);
+        SAFE_DELETE(p_this)
     }
 
     return NULL;

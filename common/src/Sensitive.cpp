@@ -182,7 +182,7 @@ void Sensitive::load_from_file(const string& file_name)
         return;
     }
 
-    RJsonValue &json_data_list = JsonParse::get(l_document, "data");
+    RJsonValue &json_data_list = JsonParse::get_child(l_document, "data");
     RJ_SIZE_TYPE data_count = JsonParse::count(json_data_list);
     if(data_count <= 0)
     {
@@ -193,8 +193,8 @@ void Sensitive::load_from_file(const string& file_name)
     for (RJ_SIZE_TYPE index = 0; index < data_count; ++index)
     {
         string s_text = "";
-        RJsonValue& json_value_list = JsonParse::at(json_data_list, index);
-        RJsonValue& json_value = JsonParse::at(json_value_list, 0);
+        RJsonValue& json_value_list = JsonParse::at_child(json_data_list, index);
+        RJsonValue& json_value = JsonParse::at_child(json_value_list, 0);
         if(json_value.IsInt())
         {
             s_text = std::to_string(json_value.GetInt());

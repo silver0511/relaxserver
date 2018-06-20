@@ -44,6 +44,8 @@ include_directories(${PROJECT_SOURCE_DIR}/third_party)
 add_subdirectory(common)
 #network
 add_subdirectory(network/nett)
-
+#third_party
+add_subdirectory(third_party/gtest-1.7.0)
+add_subdirectory(third_party/fakeit)
 #test
 add_subdirectory(test)

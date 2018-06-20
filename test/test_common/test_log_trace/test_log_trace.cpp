@@ -24,6 +24,8 @@ void *thread_func(void* p)
             break;
         }
     }
+
+    return NULL;
 }
 
 

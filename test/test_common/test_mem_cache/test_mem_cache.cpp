@@ -113,7 +113,7 @@ int main()
         TestClass *p_test_class = l_test_class_vec[i];
         m_g_test_cache_pool.free_cache(p_test_class);
     }
-    printf("CachePool free_cache ========%d====\n", l_test_class_vec.size());
+    printf("CachePool free_cache ========%lu====\n", l_test_class_vec.size());
     printf("CachePool test end============\n\n\n");
 
 

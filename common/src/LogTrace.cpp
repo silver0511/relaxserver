@@ -82,7 +82,7 @@ S_LOG_BUFFER *LogTrace::write_begin(int level, const char *func_name, const char
     file_name = file_name ? file_name : "undefined_file";
     func_name = func_name ? func_name : "undefined_func";
 
-    snprintf(l_data, 512, "%u %d %04d%02d%02d %02d:%02d:%02d-%03d %s [%s:%s:%d]",
+    snprintf(l_data, 512, "%lu %lu %04d%02d%02d %02d:%02d:%02d-%03d %s [%s:%s:%d]",
              m_count, get_thread_id(),
              s_local_tm.tm_year + 1900, s_local_tm.tm_mon + 1, s_local_tm.tm_mday,
              s_local_tm.tm_hour, s_local_tm.tm_min, s_local_tm.tm_sec, milli_time,

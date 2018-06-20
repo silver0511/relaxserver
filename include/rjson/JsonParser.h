@@ -305,17 +305,22 @@ public:
 
     /**
      * 获取当前节点的大小
-     * @param json_value 需要获取的JSON节点[数组类型:json_value.IsArray()]
-     * @return 数组大小，不存在返回-1
+     * @param json_value 需要获取的JSON节点
+     * @return 数组或者对象的大小，不存在返回-1
      */
     static RJ_SIZE_TYPE count(RJsonValue &json_value)
     {
-        if(!json_value.IsArray())
+        if(json_value.IsArray())
         {
-            return -1;
+            return json_value.Size();
         }
 
-        return json_value.Size();
+        if(json_value.IsObject())
+        {
+            return json_value.MemberCount();
+        }
+
+        return -1;
     }
 
     /**
@@ -618,7 +623,7 @@ private:
     }
 
     /**
-      * 生成一个空的节点
+      * 生成一个null节点
       * 内部使用
       */
     static RJsonValue& get_null()

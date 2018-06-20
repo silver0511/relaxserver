@@ -15,7 +15,7 @@ int main()
     printf("test init_random() rand:%d \n", rand());
     printf("test get_micro_time():%lld \n", System::get_micro_time());
     printf("test get_ms_time():%lld \n", System::get_ms_time());
-    printf("test get_time():%d \n", System::get_time());
+    printf("test get_time():%ld \n", System::get_time());
     struct tm s_local_tm = {0};
     System::get_local_time(s_local_tm);
     int milli_time = System::get_ms_count();
@@ -31,7 +31,7 @@ int main()
     printf("test init_random() rand:%d \n", rand());
     printf("test get_micro_time():%lld \n", System::get_micro_time());
     printf("test get_ms_time():%lld \n", System::get_ms_time());
-    printf("test get_time():%d \n", System::get_time());
+    printf("test get_time():%ld \n", System::get_time());
     s_local_tm = {0};
     System::get_local_time(s_local_tm);
     milli_time = System::get_ms_count();

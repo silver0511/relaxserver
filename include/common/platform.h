@@ -22,6 +22,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <thread>
 
 #include "stdafx.h"
 //include stl

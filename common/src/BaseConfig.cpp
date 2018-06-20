@@ -7,8 +7,8 @@
 #include "common/BaseConfig.h"
 USING_RELAX_NAMESPACE
 
-BaseConfig::BaseConfig():m_read_interval(30 * 1000),
-                         m_elapsed_time(0),
+BaseConfig::BaseConfig():m_elapsed_time(0),
+                         m_read_interval(30 * 1000),
                          m_read_file_name("")
 {
 
@@ -83,27 +83,27 @@ bool ServerConfig::read()
         return false;
     }
 
-    RJsonValue &child_log = JsonParse::get(m_document, "log_config");
-    JsonParse::get<int>(child_log, "log_level", m_log_level);
+    RJsonValue &child_log = JsonParse::get_child(m_document, "log_config");
+    m_log_level = JsonParse::get<int>(child_log, "log_level");
 
-    RJsonValue &child_server_side = JsonParse::get(m_document, "server_side_config");
-    JsonParse::get<int>(child_server_side, "nio_threads", m_nio_threads);
-    JsonParse::get<int>(child_server_side, "deal_threads", m_deal_threads);
-    JsonParse::get<int>(child_server_side, "max_con", m_max_con);
-    JsonParse::get(child_server_side, "white_ips", m_white_ips);
+    RJsonValue &child_server_side = JsonParse::get_child(m_document, "server_side_config");
+    m_nio_threads = JsonParse::get<int>(child_server_side, "nio_threads");
+    m_deal_threads = JsonParse::get<int>(child_server_side, "deal_threads");
+    m_max_con = JsonParse::get<int>(child_server_side, "max_con");
+    m_white_ips = JsonParse::get(child_server_side, "white_ips");
 
-    RJsonValue &child_rpc_side = JsonParse::get(m_document, "rpc_side_config");
-    JsonParse::get<int>(child_rpc_side, "rpc_con", m_rpc_con);
-    JsonParse::get<int>(child_rpc_side, "rpc_con_threads", m_rpc_con_threads);
-    JsonParse::get<int>(child_rpc_side, "rpc_recv_threads", m_rpc_recv_threads);
-    JsonParse::get<int>(child_rpc_side, "rpc_deal_threads", m_rpc_deal_threads);
+    RJsonValue &child_rpc_side = JsonParse::get_child(m_document, "rpc_side_config");
+    m_rpc_con = JsonParse::get<int>(child_rpc_side, "rpc_con");
+    m_rpc_con_threads = JsonParse::get<int>(child_rpc_side, "rpc_con_threads");
+    m_rpc_recv_threads = JsonParse::get<int>(child_rpc_side, "rpc_recv_threads");
+    m_rpc_deal_threads = JsonParse::get<int>(child_rpc_side, "rpc_deal_threads");
     return false;
 }
 
 bool ServerConfig::dynamic_read()
 {
-    RJsonValue &child_log = JsonParse::get(m_document, "log_config");
-    JsonParse::get<int>(child_log, "log_level", m_log_level);
+    RJsonValue &child_log = JsonParse::get_child(m_document, "log_config");
+    m_log_level = JsonParse::get<int>(child_log, "log_level");
     return false;
 }
 

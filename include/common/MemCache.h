@@ -18,7 +18,6 @@
 #include "common/platform.h"
 #include "common/BaseFun.h"
 #include "common/Lock.h"
-using namespace std;
 
 RELAX_NAMESPACE_BEGIN
 
@@ -54,15 +53,18 @@ RELAX_NAMESPACE_BEGIN
             m_max_count = max_count;
             m_count = 0;
             m_head_index = 0;
-            m_data_list = new T*[m_max_count];
-            if(NULL == m_data_list)
-                throw;
-
-            zero_memory(m_data_list, m_max_count* sizeof(T*));
-            for(int index = 0; index < m_max_count; index++)
+            if(m_max_count > 0)
             {
-                T *data = malloc_buffer();
-                push_back(data);
+                m_data_list = new T*[m_max_count];
+                if(NULL == m_data_list)
+                    throw;
+
+                zero_memory(m_data_list, m_max_count* sizeof(T*));
+                for(int index = 0; index < m_max_count; index++)
+                {
+                    T *data = malloc_buffer();
+                    push_back(data);
+                }
             }
         }
 
@@ -124,6 +126,8 @@ RELAX_NAMESPACE_BEGIN
                 printf("[CachePool] cache is full so free_buffer()\n");
                 free_buffer(value);
             }
+
+            return true;
         }
         inline int size(){return m_count;}
         inline int max_size(){return m_max_count;}
@@ -227,15 +231,18 @@ RELAX_NAMESPACE_BEGIN
             m_max_count = max_count;
             m_count = 0;
             m_head_index = 0;
-            m_data_list = new T*[m_max_count];
-            if(NULL == m_data_list)
-                throw;
-
-            zero_memory(m_data_list, m_max_count* sizeof(T*));
-            for(int index = 0; index < m_max_count; index++)
+            if(m_max_count > 0)
             {
-                T *data = malloc_buffer();
-                push_back(data);
+                m_data_list = new T*[m_max_count];
+                if(NULL == m_data_list)
+                    throw;
+
+                zero_memory(m_data_list, m_max_count* sizeof(T*));
+                for(int index = 0; index < m_max_count; index++)
+                {
+                    T *data = malloc_buffer();
+                    push_back(data);
+                }
             }
         }
 

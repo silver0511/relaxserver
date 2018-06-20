@@ -8,7 +8,7 @@
 
 USING_RELAX_NAMESPACE
 
-MemCodec::MemCodec(relax::ubyte *buffer, relax::ulong buf_len, relax::ICodec::ENUM_TYPE type)
+MemCodec::MemCodec(ubyte *buffer, ulong buf_len, ICodec::ENUM_TYPE type)
 {
     m_buffer = buffer;
     m_buf_len = buf_len;

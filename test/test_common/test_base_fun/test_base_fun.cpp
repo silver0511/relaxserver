@@ -18,7 +18,7 @@ int main()
     printf("test memcpy_safe() result:%d, src:%s, des:%s \n", result, src, des);
     printf("test get_app_path():%s \n", get_app_path().c_str());
     printf("test get_full_path():%s \n", get_full_path("test_full_path.txt").c_str());
-    printf("test get_thread_id():%d \n", get_thread_id());
+    printf("test get_thread_id():%lu \n", get_thread_id());
     printf("test get_cur_proc_id():%d \n", get_cur_proc_id());
     printf("test get_ip_str():%s \n", get_ip_str(inet_addr("192.168.131.31")).c_str());
     printf("test get_ip_by_host():%d \n", get_ip_by_host("www.baidu.com"));

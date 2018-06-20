@@ -105,7 +105,7 @@ static void test_thread_proc2(void *ptr)
                     m_g_hash_key_lock.unlock();
                 }
                 TestClass *p_test_class = m_g_cache_hash_map.get(key_value);
-                printf("thread safe hash map get:%d is 0x%08x...remove is %d \n", key_value, p_test_class,
+                printf("thread safe hash map get:%d is 0x%llx...remove is %d \n", key_value, (uint64)p_test_class,
                        m_g_cache_hash_map.remove(key_value));
             }
             {
@@ -122,7 +122,7 @@ static void test_thread_proc2(void *ptr)
                 }
 
                 TestClass *p_test_class = m_g_cache_tree_map.get(key_value);
-                printf("thread safe tree map get:%d is 0x%08x...remove is %d \n", key_value, p_test_class,
+                printf("thread safe tree map get:%d is 0x%llx...remove is %d \n", key_value, (uint64)p_test_class,
                        m_g_cache_tree_map.remove(key_value));
             }
         }
@@ -133,7 +133,7 @@ void test_unsafe_map()
 {
 
     printf("test m_g_cache_hash_map thread unsafe start ============ \n");
-    m_g_cache_hash_map.init(10, HASH_MAP, false);
+    m_g_cache_hash_map.init(10, HASH_MAP, ACTIVE_CACHE, false);
     for(int i = 0; i < 12; i++)
     {
         TestClass *p_test_class = m_g_cache_hash_map.malloc_node();
@@ -157,14 +157,14 @@ void test_unsafe_map()
         }
 
         TestClass *p_test_class = m_g_cache_hash_map.get(key_value);
-        printf("hash map get:%d is 0x%08x...remove is %d \n", key_value, p_test_class,
+        printf("hash map get:%d is 0x%llx...remove is %d \n", key_value, (uint64)p_test_class,
                m_g_cache_hash_map.remove(key_value));
 
     }
     printf("test m_g_cache_hash_map thread unsafe end ============== \n");
 
     printf("test m_g_cache_tree_map thread unsafe start ============ \n");
-    m_g_cache_tree_map.init(10, TREE_MAP, false);
+    m_g_cache_tree_map.init(10, TREE_MAP, ACTIVE_CACHE, false);
     for(int i = 0; i < 12; i++)
     {
         TestClass *p_test_class = m_g_cache_tree_map.malloc_node();
@@ -188,7 +188,7 @@ void test_unsafe_map()
         }
 
         TestClass *p_test_class = m_g_cache_tree_map.get(key_value);
-        printf("tree map get:%d is 0x%08x...remove is %d \n", key_value, p_test_class,
+        printf("tree map get:%d is 0x%llx...remove is %d \n", key_value, (uint64)p_test_class,
                m_g_cache_tree_map.remove(key_value));
 
     }
@@ -200,8 +200,8 @@ void test_safe_map()
     m_g_cache_hash_map.clear();
     m_g_cache_tree_map.clear();
 
-    m_g_cache_hash_map.init(10);
-    m_g_cache_tree_map.init(10, TREE_MAP, true);
+    m_g_cache_hash_map.init(10, HASH_MAP, ACTIVE_CACHE);
+    m_g_cache_tree_map.init(10, TREE_MAP, ACTIVE_CACHE, true);
 
     m_g_hash_key_vec.clear();
     m_g_tree_key_vec.clear();

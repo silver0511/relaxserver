@@ -7,7 +7,7 @@
 #ifndef __RX_LOCK_H__
 #define __RX_LOCK_H__
 #include <pthread.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include "common/platform.h"
 
 RELAX_NAMESPACE_BEGIN
@@ -61,6 +61,7 @@ RELAX_NAMESPACE_BEGIN
         inline LockHelper &operator=(const LockHelper &rhs)
         {
             m_lock = rhs.m_lock;
+            return *this;
         }
     private:
         Lock &m_lock;

@@ -7,23 +7,34 @@
 #ifndef __RX_BASE_FUN_H__
 #define __RX_BASE_FUN_H__
 #include "common/platform.h"
-#include <linux/unistd.h>
-using namespace std;
 
 RELAX_NAMESPACE_BEGIN
 
-#ifdef __NR_gettid
-    //syscall0(int, gettid)
-    inline int gettid ()
-    {
-        return syscall(__NR_gettid);
-    }
+#if defined(__unix) || defined(__linux)
+#include <linux/unistd.h>
+    #ifdef __NR_gettid
+        //syscall0(int, gettid)
+        inline int gettid ()
+        {
+            return syscall(__NR_gettid);
+        }
+    #else
+        inline int gettid()
+        {
+            return -ENOSYS;
+        }
+    #endif /* __NR_gettid */
 #else
     inline int gettid()
     {
-        return -ENOSYS;
+        return 0;
     }
-#endif /* __NR_gettid */
+#endif
+
+//    inline std::thread::id get_thread_id()
+//    {
+//        return this_thread::get_id();
+//    }
 
     inline int inc_index(int index, int count, int size)
     {
@@ -37,7 +48,7 @@ RELAX_NAMESPACE_BEGIN
     }
 
     //支持memcpy的边界检查
-    inline bool memcpy_safe(char* src, int src_len, char* des, int des_len)
+    inline bool memcpy_safe(const char* src, int src_len, char* des, int des_len)
     {
         if(src_len > des_len)
         {

@@ -6,7 +6,6 @@
 #ifndef __RX_BASE_QUEUE_H__
 #define __RX_BASE_QUEUE_H__
 
-#include <stdlib.h>
 #include "common/platform.h"
 #include "common/BaseFun.h"
 #include "common/Lock.h"

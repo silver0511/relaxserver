@@ -114,7 +114,7 @@ public:
     void get_dump()
     {
         printf("bool_value:%d, byte_value:%d, ubyte_value:%d, short_value:%d, "
-                       "ushort_value:%d, int_value:%d, uint_value:%lld, int64_value:%lld, "
+                       "ushort_value:%d, int_value:%d, uint_value:%u, int64_value:%lld, "
                        "uint64_value:%llu, float_value:%f, double_value:%lf, "
                        "char_value:%s, string_value:%s, ",
         bool_value, byte_value, ubyte_value, short_value, ushort_value, int_value, uint_value,

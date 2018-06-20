@@ -36,6 +36,9 @@ RELAX_NAMESPACE_BEGIN
 #ifndef SAFE_DELETE_ARRAY
     #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #endif
+#ifndef SAFE_FREE
+#define SAFE_FREE(p) { if(p) { free((p));   (p)=NULL; } }
+#endif
 
 #ifndef TRUE
     #define TRUE                (1)

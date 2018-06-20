@@ -42,7 +42,7 @@ RELAX_NAMESPACE_BEGIN
         inline S_LOG_BUFFER &operator <<(void *value)
         {
                 long l_value =(long)(value);
-                snprintf(m_trans_buffer, DEF_MAX_TRANS_BUFFER-1, "0x%x", l_value);
+                snprintf(m_trans_buffer, DEF_MAX_TRANS_BUFFER-1, "0x%lx", l_value);
                 return operate_string(m_trans_buffer);
         }
         inline S_LOG_BUFFER &operator <<(char *value)
