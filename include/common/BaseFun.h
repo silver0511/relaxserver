@@ -64,6 +64,7 @@ RELAX_NAMESPACE_BEGIN
 
     inline std::string get_app_path()
     {
+#if defined(__unix) || defined(__linux)
         char l_app_path[256] = {0};
         char l_full_path[256] = {0};
 
@@ -84,6 +85,14 @@ RELAX_NAMESPACE_BEGIN
         l_ret_path += "/";
 
         return l_ret_path;
+#else
+        char l_full_path[256] = {0};
+        getcwd(l_full_path, 256);
+        std::string l_ret_path = l_full_path;
+        l_ret_path += "/";
+
+        return l_ret_path;
+#endif
     }
 
     inline std::string get_full_path(const char *file_name)
