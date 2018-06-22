@@ -17,6 +17,11 @@ function Build()
 {
     echo "-- $1 prject"
     echo "-- ${COMPILE_TYPE}"
+    if [ ! -d $2 ];
+    then
+        echo -e "error build file " . $2 . " is not exsist-----------------"
+        return
+    fi
     cd $2
     BEGIN_TIME=`date +%s`
 
