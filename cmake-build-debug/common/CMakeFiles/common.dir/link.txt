@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libcommon.a  CMakeFiles/common.dir/src/BaseConfig.cpp.o CMakeFiles/common.dir/src/BaseThread.cpp.o CMakeFiles/common.dir/src/LogTrace.cpp.o CMakeFiles/common.dir/src/MemCodec.cpp.o CMakeFiles/common.dir/src/Sensitive.cpp.o CMakeFiles/common.dir/src/System.cpp.o CMakeFiles/common.dir/src/aes.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libcommon.a

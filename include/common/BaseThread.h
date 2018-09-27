@@ -36,7 +36,7 @@ RELAX_NAMESPACE_BEGIN
         static void *thread_proc(void *ptr);
 
     protected:
-        bool m_run;
+        bool            m_run;
         void            *m_user_data;
         void            (*m_thread_func)(void *);
 

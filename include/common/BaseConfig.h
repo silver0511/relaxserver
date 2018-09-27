@@ -14,10 +14,18 @@ RELAX_NAMESPACE_BEGIN
 
     class BaseConfig
     {
+    protected:
+        enum E_LOAD_MODE
+        {
+            INVALID_MODE = -1,
+            MEMORY_MODE = 1,
+            FILE_MODE
+        };
     public:
         BaseConfig();
         virtual ~BaseConfig();
-        virtual bool load(const char *file_name);
+        virtual bool load_file(const char *file_name);
+        virtual bool load_memory(const string &data);
         //elapsed_time(ms)
         virtual bool check_event(int elapsed_time);
     public:
@@ -29,6 +37,7 @@ RELAX_NAMESPACE_BEGIN
         int m_elapsed_time;                         //current elapsed time(ms)
         int m_read_interval;                        //read interval time(ms)
         string m_read_file_name;                    //config file absolutely path
+        E_LOAD_MODE m_load_mode;
     };
 
     class ServerConfig : public BaseConfig

@@ -1,1 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -std=c++0x -O0 -g -ggdb -Wall -pthread -fPIC -rdynamic -dynamiclib -Wl,-headerpad_max_install_names  -o libnett.dylib -install_name @rpath/libnett.dylib CMakeFiles/nett.dir/src/TcpManager.cpp.o 

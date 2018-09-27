@@ -115,9 +115,10 @@ RELAX_NAMESPACE_BEGIN
         }
 
         void *l_handle = dlopen(lib_name, RTLD_LAZY);
-        if(NULL != dlerror())
+        char *l_error = dlerror();
+        if(NULL != l_error)
         {
-            printf("\n load_lib %s failed: %s", lib_name, dlerror());
+            printf("\n load_lib %s failed: %s \n", lib_name, l_error);
             return NULL;
         }
 
@@ -132,7 +133,12 @@ RELAX_NAMESPACE_BEGIN
         }
 
         bool result = (bool)dlclose(handle);
-
+        char *l_error = dlerror();
+        if(NULL != l_error)
+        {
+            printf("\n free_lib failed: %s \n", l_error);
+            return NULL;
+        }
         return result;
     }
 
@@ -144,9 +150,10 @@ RELAX_NAMESPACE_BEGIN
         }
 
         void *l_func = dlsym(handle, func_name);
-        if(NULL != dlerror())
+        char *l_error = dlerror();
+        if(NULL != l_error)
         {
-            printf("\n get_func %s failed: %s", func_name, dlerror());
+            printf("\n get_func %s failed: %s \n", func_name, l_error);
             return NULL;
         }
 
@@ -238,6 +245,22 @@ RELAX_NAMESPACE_BEGIN
         }
 
         return "";
+    }
+
+    inline int64 get_asc(const string &target_data)
+    {
+        int64 sum_asc = 0;
+        if(target_data.empty())
+        {
+            return sum_asc;
+        }
+
+        for(unsigned index = 0; index < target_data.length(); index++)
+        {
+            sum_asc += (int64)target_data.at(index);
+        }
+
+        return sum_asc;
     }
 
 
