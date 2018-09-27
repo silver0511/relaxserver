@@ -16,8 +16,8 @@ RELAX_NAMESPACE_BEGIN
     {
     public:
         MemCodec();
-        MemCodec(ubyte *buffer, ulong buf_len, ENUM_TYPE type);
-        ~MemCodec();
+        MemCodec(ubyte *buffer, ulong buf_len, ENUM_CODEC_TYPE type);
+        virtual ~MemCodec();
 
     public:
         //encode and decode
@@ -39,10 +39,15 @@ RELAX_NAMESPACE_BEGIN
         virtual long codec(ubyte *value, uint &buf_len);
         virtual long codec(string &value);
         virtual long codec(wstring &value);
+        //offset
+        virtual long codec(int &value, uint offset);
+        //custom
+        virtual long codec(ICustomCodec custom_codec);
 
         //return current cursor pos
         virtual uint get_pos() { return m_cur_pos; }
-        virtual ubyte *get_buf(){ return m_buffer; }
+        virtual ENUM_CODEC_TYPE get_codec_type(){ return m_type; }
+        virtual ulong get_buf_len() { return m_buf_len; }
 
     private:
         //user for [int64, ulong, ushort ......]

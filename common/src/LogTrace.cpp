@@ -10,11 +10,12 @@ USING_RELAX_NAMESPACE
 
 LogTrace g_log_trace;
 
-LogTrace::LogTrace() : m_cache_pool(DEF_LOG_TRACE_COUNT)
+LogTrace::LogTrace()
 {
 //    ios_base::sync_with_stdio(false);
 //    wcout.imbue(locale(""));
     setlocale(LC_ALL, "en_US.UTF-8");
+    printf("LogTrace::LogTrace() address = 0x%llx \n", (uint64)this);
     clear();
 }
 
@@ -32,16 +33,20 @@ void LogTrace::clear()
     m_record_count = 0;
     m_file_count = 0;
     zero_memory(m_file_name, sizeof(m_file_name));
+    m_buffer_queue.clear();
+    m_cache_pool.clear();
 }
 
 void LogTrace::init(int type, int level, const char *file_name)
 {
+    printf("LogTrace init is_init = %d, address = 0x%llx \n", m_is_init, (uint64)this);
     if(m_is_init)
         return;
 
     m_is_init = true;
 
-    m_buffer_queue.init(DEF_LOG_TRACE_COUNT);
+    m_buffer_queue.init(DEF_MAX_LOG_QUEUE_COUNT);
+    m_cache_pool.init(DEF_MAX_LOG_CACHE_COUNT);
 
     m_type = type;
     m_level = level;

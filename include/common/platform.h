@@ -23,11 +23,17 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <thread>
+#include <algorithm>
+#include <fstream>
+#include <libgen.h>
 
 #include "stdafx.h"
 //include stl
 #include <vector>
 #include <queue>
+#include <map>
+#include <list>
+#include <set>
 #if __cplusplus > 199711L
 #include<unordered_map>
 #endif
@@ -80,6 +86,11 @@ typedef uint64		SERVERID;	//server id
 #define INVALID_INT32			(0xFFFFFFFF)
 #define INVALID_INT64	 		(0xFFFFFFFFFFFFFFFULL)
 
+#define SOCKET_ERROR			(-1)
+#define CloseSocket(socket)		close(socket)
+#define SD_SEND					(SHUT_WR)
+#define SD_RECEIVE				(SHUT_RD)
+#define SD_BOTH					(SHUT_RDWR)
 
 //////////////////////////////////////////////////////////////////////////
 //DLL_EXPORT
@@ -141,6 +152,7 @@ typedef uint64		SERVERID;	//server id
 	#pragma warning(disable : 4251) //  needs to have dll-interface to be used by clients of class 'xxClass'
 #endif //(_MSC_VER)
 
+#define GETSOCKET_ERRCODE()		errno
 RELAX_NAMESPACE_END
 
 #endif /* __RX_PLATFORM_H__ */

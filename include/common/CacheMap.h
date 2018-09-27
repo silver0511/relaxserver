@@ -30,6 +30,9 @@ template<typename T_ID, class T_VALUE>
 class CacheMap
 {
 public:
+    //return value: [need break]
+    typedef function<bool(T_VALUE *)> IProcessInterface;
+public:
     typedef class rx_hash_map<T_ID, T_VALUE*> RefHashMap;
     typedef typename rx_hash_map<T_ID, T_VALUE*>::iterator RefHashMapIter;
 
@@ -46,7 +49,7 @@ public:
     }
 
     virtual void init(uint max_size = RX_DEFAULT_CACHE_SIZE, E_MAP_TYPE map_type = HASH_MAP,
-                  E_CACHE_TYPE cache_type = PASSITIVE_CACHE, bool safe_thread = true)
+                  E_CACHE_TYPE cache_type = ACTIVE_CACHE, bool safe_thread = true)
     {
         LOCK_HELPER(m_lock);
         m_hash_map.clear();
@@ -76,6 +79,19 @@ public:
         else
         {
             clear_impl();
+        }
+    }
+
+    virtual void reset()
+    {
+        if(m_safe)
+        {
+            LOCK_HELPER(m_lock);
+            reset_impl();
+        }
+        else
+        {
+            reset_impl();
         }
     }
 
@@ -143,6 +159,32 @@ public:
         }
     }
 
+    inline void process_value(IProcessInterface process_interface)
+    {
+        if(m_safe)
+        {
+            LOCK_HELPER(m_lock);
+            process_value_impl(process_interface);
+        }
+        else
+        {
+            process_value_impl(process_interface);
+        }
+    }
+
+    inline vector<T_VALUE *> values()
+    {
+        if(m_safe)
+        {
+            LOCK_HELPER(m_lock);
+            return values_imple();
+        }
+        else
+        {
+            return values_imple();
+        }
+    }
+
 private:
     T_VALUE* malloc_node_impl()
     {
@@ -193,6 +235,31 @@ private:
             l_value = m_cache_queue.pop_front();
         }
         m_cache_queue.clear();
+    }
+
+    void reset_impl()
+    {
+        if(m_map_type == HASH_MAP)
+        {
+            RefHashMapIter iter = m_hash_map.begin();
+            while(iter != m_hash_map.end())
+            {
+                free_node_impl(iter->second);
+                ++iter;
+            }
+        }
+        else
+        {
+            RefTreeMapIter iter = m_tree_map.begin();
+            while(iter != m_tree_map.end())
+            {
+                free_node_impl(iter->second);
+                ++iter;
+            }
+        }
+
+        m_hash_map.clear();
+        m_tree_map.clear();
     }
 
     inline bool add_impl(const T_ID &ref_id, T_VALUE *ref_value)
@@ -277,6 +344,53 @@ private:
             size = static_cast<uint>(m_tree_map.size());
         }
         return size;
+    }
+
+    inline void process_value_impl(IProcessInterface process_interface)
+    {
+        if(m_map_type == HASH_MAP)
+        {
+            for (RefHashMapIter iter = m_hash_map.begin(); iter != m_hash_map.end(); ++iter)
+            {
+                if(process_interface(iter->second))
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (RefTreeMapIter iter = m_tree_map.begin(); iter != m_tree_map.end(); ++iter)
+            {
+                if(process_interface(iter->second))
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    inline vector<T_VALUE *> values_impl()
+    {
+        vector<T_VALUE *> l_vec;
+        if(m_map_type == HASH_MAP)
+        {
+            l_vec.reserve(m_hash_map.size() + 1);
+            for (RefHashMapIter iter = m_hash_map.begin(); iter != m_hash_map.end(); ++iter)
+            {
+                l_vec.push_back(iter->second);
+            }
+        }
+        else
+        {
+            l_vec.reserve(m_tree_map.size() + 1);
+            for (RefTreeMapIter iter = m_tree_map.begin(); iter != m_tree_map.end(); ++iter)
+            {
+                l_vec.push_back(iter->second);
+            }
+        }
+
+        return l_vec;
     }
 protected:
     bool                    m_safe;

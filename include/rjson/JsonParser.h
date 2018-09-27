@@ -155,23 +155,23 @@ public:
      * @return K_ID 默认返回0
      */
     template<typename K_ID>
-    static K_ID get(RJsonValue &json_value, const char* key)
+    static K_ID get(RJsonValue &json_value, const char* key, K_ID default_value = 0)
     {
         if(!json_value.IsObject())
         {
-            return 0;
+            return default_value;
         }
 
         auto l_iter = json_value.FindMember(key);
         if(l_iter == json_value.MemberEnd())
         {
-            return 0;
+            return default_value;
         }
 
         K_ID l_out_value;
         if(!get_value<K_ID>(l_iter->value, l_out_value))
         {
-            return 0;
+            return default_value;
         }
         return l_out_value;
     }
@@ -182,22 +182,22 @@ public:
      * @param key KEY字符串
      * @return string value
      */
-    static string get(RJsonValue &json_value, const char* key)
+    static string get(RJsonValue &json_value, const char* key, const string& default_value = "")
     {
         if(!json_value.IsObject())
         {
-            return "";
+            return default_value;
         }
 
         auto l_iter = json_value.FindMember(key);
         if(l_iter == json_value.MemberEnd())
         {
-            return "";
+            return default_value;
         }
 
         if(!l_iter->value.IsString())
         {
-            return "";
+            return default_value;
         }
 
         return std::move(l_iter->value.GetString());
@@ -331,21 +331,21 @@ public:
      * @return K_ID 默认返回0
      */
     template<typename K_ID>
-    static K_ID at(RJsonValue &json_value, int index)
+    static K_ID at(RJsonValue &json_value, int index, K_ID default_value = 0)
     {
         if(!json_value.IsArray())
         {
-            return 0;
+            return default_value;
         }
 
-        if(index < 0 || index >= json_value.Size())
+        if(index < 0 || index >= (int)json_value.Size())
         {
-            return 0;
+            return default_value;
         }
         K_ID l_out_value;
         if(!get_value<K_ID>(json_value[index], l_out_value))
         {
-            return 0;
+            return default_value;
         }
         return l_out_value;
     }
@@ -356,21 +356,21 @@ public:
      * @param index 数组索引地址
      * @return string value
      */
-    static string at(RJsonValue &json_value, int index)
+    static string at(RJsonValue &json_value, int index, const string &default_value = "")
     {
         if(!json_value.IsArray())
         {
-            return "";
+            return default_value;
         }
 
-        if(index < 0 || index >= json_value.Size())
+        if(index < 0 || index >= (int)json_value.Size())
         {
-            return "";
+            return default_value;
         }
 
         if(!json_value[index].IsString())
         {
-            return "";
+            return default_value;
         }
 
         return std::move(json_value[index].GetString());
@@ -391,7 +391,7 @@ public:
             return get_null();
         }
 
-        if(index < 0 || index >= json_value.Size())
+        if(index < 0 || index >= (int)json_value.Size())
         {
             return get_null();
         }
@@ -412,7 +412,7 @@ public:
             return false;
         }
 
-        if(index < 0 || index >= json_value.Size())
+        if(index < 0 || index >= (int)json_value.Size())
         {
             return false;
         }
@@ -422,6 +422,36 @@ public:
         json_value.Erase(l_beg + index);
 
         return true;
+    }
+
+    /**
+     * 解析成JSON对象
+     * @param json_document 通过RJ_CREATE_EMPTY_DOCUMENT宏创建的空对象,返回给外部使用
+     * @param data 需要解析的json字符串
+     * @return 是否解析成功[true or false]
+     */
+    static bool parse(OUT RJDocument &json_document, const char* data, int len)
+    {
+        if(NULL == data)
+        {
+            return false;
+        }
+
+        json_document.Parse<0>(data, len);
+        bool l_has_error = json_document.HasParseError();
+        if(l_has_error)
+        {
+            fprintf(stderr, "\nparse Error(offset %u): %s\n",
+                    (unsigned)json_document.GetErrorOffset(),
+                    rapidjson::GetParseError_En(json_document.GetParseError()));
+        }
+
+        if(json_document.IsNull())
+        {
+            l_has_error = true;
+        }
+
+        return !l_has_error;
     }
 
     /**

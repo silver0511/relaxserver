@@ -1,0 +1,9 @@
+package com.relax.pb.business;
+
+import "common.proto"
+
+message LOGIN_RQ
+{
+    required BASE_HEAD head = 1;
+    required string value = 2;
+}

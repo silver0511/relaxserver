@@ -8,7 +8,12 @@
 
 USING_RELAX_NAMESPACE
 
-MemCodec::MemCodec(ubyte *buffer, ulong buf_len, ICodec::ENUM_TYPE type)
+MemCodec::MemCodec()
+{
+
+}
+
+MemCodec::MemCodec(ubyte *buffer, ulong buf_len, ICodec::ENUM_CODEC_TYPE type)
 {
     m_buffer = buffer;
     m_buf_len = buf_len;
@@ -474,4 +479,38 @@ long MemCodec::codec(wstring &value)
     m_cur_pos += l_head_val;
 
     return (l_head_val + l_head_size);
+}
+
+long MemCodec::codec(int &value, uint offset)
+{
+    long l_size = sizeof(int);
+    if(offset > l_size)
+        throw(-1);
+
+    if(m_buf_len < (m_cur_pos + offset))
+        throw(-1);
+
+    int l_temp_val = 0;
+    if(m_type == READ)
+    {
+        memcpy(&l_temp_val, m_buffer + m_cur_pos, offset);
+        value = func_ntoh<int>(l_temp_val);
+    }
+    else
+    {
+        l_temp_val = func_hton<int>(value);
+        memcpy(m_buffer + m_cur_pos, &l_temp_val, offset);
+    }
+
+    m_cur_pos += l_size;
+
+    return l_size;
+}
+
+long MemCodec::codec(ICustomCodec custom_codec)
+{
+    long l_size = 0;
+    l_size = custom_codec(m_buffer + m_cur_pos, m_buf_len - m_cur_pos);
+    m_cur_pos += l_size;
+    return l_size;
 }

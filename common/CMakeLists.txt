@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-project(libcommon)
-
-set(CMAKE_CXX_STANDARD 11)
+project(common)
 
 aux_source_directory(src LIBCOMMON_SOURCES)
 
@@ -14,8 +12,8 @@ else()
     add_definitions(-D_DEBUG -DTRACE_LOG -D__SERVER -D_GLIBCXX_DEPRECATED)
 endif()
 
-add_library(common STATIC ${LIBCOMMON_SOURCES})
+add_library(common SHARED ${LIBCOMMON_SOURCES})
 
-install(TARGETS common DESTINATION ${STATIC_LIB_OUTPUT_PATH})
+install(TARGETS common DESTINATION ${SHARED_LIB_OUTPUT_PATH})
 
 

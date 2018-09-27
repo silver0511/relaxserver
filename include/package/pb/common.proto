@@ -1,0 +1,7 @@
+package com.relax.pb;
+
+message BASE_HEAD
+{
+    required int64 user_id = 1;
+    required int32 pack_session_id = 2;
+}

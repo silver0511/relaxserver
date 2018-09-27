@@ -10,7 +10,7 @@ LINK_DIRECTORIES(${STATIC_LIB_OUTPUT_PATH} ${SHARED_LIB_OUTPUT_PATH})
 
 set(TEST_SOURCE test_lock.cpp)
 add_executable(test_lock ${TEST_SOURCE})
-target_link_libraries(test_lock -lpthread -ldl common.a)
+target_link_libraries(test_lock -lpthread -ldl -lcommon)
 
 #TARGETS:可执行文件
 #PROGRAMS:非目标文件的可执行程序(比如脚本)

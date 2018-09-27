@@ -30,7 +30,7 @@ void *thread_func(void* p)
 int main()
 {
     start_time = System::get_ms_time();
-    server_config.load("config/test_config.json");
+    server_config.load_file("config/test_config.json");
     server_config.read();
     server_config.get_dump();
     pthread_t lthread;

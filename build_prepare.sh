@@ -26,28 +26,20 @@ if [ ! -d "./bin/release/log" ]; then
     mkdir -p "./bin/release/log"
 fi
 
-#copy config
-rm -rf ./bin/debug/config
-rm -rf ./bin/release/config
-cp -rf ./config ./bin/debug
-cp -rf ./config ./bin/release
-
-#copy third_party
-#bin
-rm -rf ./bin/debug/third_party
-rm -rf ./bin/release/third_party
-cp -rf ./third_party/bin ./bin/debug/third_party
-cp -rf ./third_party/bin ./bin/release/third_party
-#lib
-rm -rf ./lib/debug/third_party
-rm -rf ./lib/release/third_party
-cp -rf ./third_party/lib ./lib/debug/third_party
-cp -rf ./third_party/lib ./lib/release/third_party
+#proto
+#rm -rf ./include/package/hpb
+#rm -rf ./net_serialize/hpb
+#mkdir ./net_serialize/hpb
+#mkdir ./include/hpb
+#protoc -I=./include/package/pb --cpp_out=./include/package/hpb ./include/package/pb/*.proto
+#rm -rf ./include/package/hpb/*.cc
+#protoc -I=./include/package/pb --cpp_out=./net_serialize/hpb ./include/package/pb/*.proto
+#rm -rf ./net_serialize/hpb/*.h
 
 date
 if [ -z $COMPILE_TYPE ];
 then
-    echo -e "Error need a Param  --> Usage ./build_cs.sh  [debug] or [release]-----------------------"
+    echo -e "Error need a Param  --> Usage ./build_prepare.sh  [debug] or [release]-----------------------"
     exit
 fi
 
@@ -56,13 +48,13 @@ if [ "$COMPILE_TYPE" == "release" ];
 then
     echo -e "Start cmake release-----------------------"
     cd ./build/release
-    cmake -DCOMPILE_TYPE=release ../../
+    cmake -DCOMPILE_TYPE=release -DCOMPILE_TOOL=command ../../
     cd ../../
     echo -e "End cmake release-------------------------"
 else
     echo -e "Start cmake debug-----------------------"
     cd ./build/debug
-    cmake -DCOMPILE_TYPE=debug ../../
+    cmake -DCOMPILE_TYPE=debug -DCOMPILE_TOOL=command  ../../
     cd ../../
     echo -e "End cmake debug-------------------------"
 fi

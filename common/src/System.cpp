@@ -4,6 +4,8 @@
  * created by silver0511
  */
 
+#include <common/System.h>
+
 #include "common/System.h"
 
 USING_RELAX_NAMESPACE
@@ -91,4 +93,59 @@ void System::get_word_vec(const string &text, vector<string> &word_vec)
         word_vec.push_back(text.substr(l_offset, l_word_size));
         l_offset += l_word_size;
     }
+}
+
+ubyte *System::read_from_file(const char *file_name, bool for_string, int &buf_len)
+{
+    if(file_name == NULL)
+    {
+        return NULL;
+    }
+
+    const char* mode = NULL;
+    if(for_string)
+        mode = "rt";
+    else
+        mode = "rb";
+
+    int readsize;
+
+    unsigned char *buf = NULL;
+    do
+    {
+        FILE *fp = fopen(file_name, mode);
+        if(!fp)
+        {
+            break;
+        }
+        fseek(fp,0,SEEK_END);
+        buf_len = ftell(fp);
+        fseek(fp,0,SEEK_SET);
+
+        if(for_string)
+        {
+            buf = (ubyte*)malloc(sizeof(ubyte) * (buf_len + 1));
+            buf[buf_len] = '\0';
+        }
+        else
+        {
+            buf = (ubyte*)malloc(sizeof(ubyte) * buf_len);
+        }
+
+        readsize = fread(buf, sizeof(ubyte), buf_len, fp);
+        fclose(fp);
+
+        if(for_string && readsize < buf_len)
+        {
+            buf[readsize] = '\0';
+        }
+    }while (0);
+
+    if(NULL == buf || 0 == readsize)
+    {
+        return NULL;
+    }
+
+    printf("[System]read_from_file file_name = %s, read size = %d \n", file_name, readsize);
+    return buf;
 }

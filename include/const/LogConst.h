@@ -13,10 +13,11 @@
 RELAX_NAMESPACE_BEGIN
 
 #define FILE_NAME_LENGTH	                (255)	    // max file size
-#define DEF_MAX_TRANS_BUFFER                (128)
-#define DEF_ONCE_LOG_BUFFER_SIZE            (2048)	    // max one log size 2k
+#define DEF_MAX_TRANS_BUFFER                (4032)
+#define DEF_ONCE_LOG_BUFFER_SIZE            (4096)	    // max one log size 4k
 #define DEF_LOG_MAX_LINE                    (999999)
-#define DEF_LOG_TRACE_COUNT                 (10000)     // write log max cache
+#define DEF_MAX_LOG_CACHE_COUNT             (1024)      // write log max cache
+#define DEF_MAX_LOG_QUEUE_COUNT             (8192)      // write log max queue
 
 //log display type
 #define		DEF_DISPLAY_TYPE_FILE			(1)			// write log file

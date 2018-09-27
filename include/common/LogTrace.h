@@ -7,8 +7,6 @@
 #ifndef __RX_LOGTRACE_H__
 #define __RX_LOGTRACE_H__
 
-#include <fstream>
-#include <libgen.h>
 #include "common/platform.h"
 #include "const/LogConst.h"
 #include "common/Lock.h"

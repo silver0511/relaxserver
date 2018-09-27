@@ -4,12 +4,15 @@
  * created by silver0511
  */
 
+#include <common/BaseConfig.h>
+
 #include "common/BaseConfig.h"
 USING_RELAX_NAMESPACE
 
 BaseConfig::BaseConfig():m_elapsed_time(0),
                          m_read_interval(30 * 1000),
-                         m_read_file_name("")
+                         m_read_file_name(""),
+                         m_load_mode(INVALID_MODE)
 {
 
 }
@@ -19,7 +22,7 @@ BaseConfig::~BaseConfig()
 
 }
 
-bool BaseConfig::load(const char *file_name)
+bool BaseConfig::load_file(const char *file_name)
 {
     if(NULL == file_name)
     {
@@ -39,19 +42,43 @@ bool BaseConfig::load(const char *file_name)
         return false;
     }
 
-    return false;
+    m_load_mode = FILE_MODE;
+    return true;
+}
+
+bool BaseConfig::load_memory(const string &data)
+{
+    if(data.empty())
+    {
+        return false;
+    }
+
+    bool result = JsonParse::parse(m_document, data.c_str());
+    if(!result || m_document.IsNull())
+    {
+        printf("\n[BaseConfig load] read data %s invalid\n", data.c_str());
+        return false;
+    }
+
+    m_load_mode = MEMORY_MODE;
+    return true;
 }
 
 bool BaseConfig::check_event(int elapsed_time)
 {
+    if(m_load_mode != FILE_MODE)
+    {
+        return true;
+    }
+
     m_elapsed_time += elapsed_time;
     if(m_elapsed_time > m_read_interval)
     {
         m_elapsed_time = 0;
-        load(m_read_file_name.c_str());
+        load_file(m_read_file_name.c_str());
         dynamic_read();
     }
-    return false;
+    return true;
 }
 
 
@@ -104,7 +131,7 @@ bool ServerConfig::dynamic_read()
 {
     RJsonValue &child_log = JsonParse::get_child(m_document, "log_config");
     m_log_level = JsonParse::get<int>(child_log, "log_level");
-    return false;
+    return true;
 }
 
 void ServerConfig::get_dump()

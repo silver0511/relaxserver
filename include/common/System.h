@@ -57,6 +57,13 @@ RELAX_NAMESPACE_BEGIN
          * @param word_vec OUT param all of the words that the text has
          */
         static void get_word_vec(const string &text, OUT vector<string> &word_vec);
+        /**
+         * read buffer from file
+         * @param file_name
+         * @param for_string is string
+         * @param buf_len buffer new len
+         */
+        static ubyte* read_from_file(const char *file_name, bool for_string, int &buf_len);
     private:
     };
 

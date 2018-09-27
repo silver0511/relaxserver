@@ -19,7 +19,7 @@ function Build()
     echo "-- ${COMPILE_TYPE}"
     if [ ! -d $2 ];
     then
-        echo -e "error build file " . $2 . " is not exsist-----------------"
+        echo -e "error build file " . $2 . " is not exsist---------------------------------------"
         return
     fi
     cd $2
@@ -45,9 +45,11 @@ else
 fi
 
 #-----------begin --------------------------------
-#make common
+######third_party
+Build 'third_party' './third_party'
+#######common
 Build 'common' './common'
-#network
+######network
 Build 'nett' './network/nett'
 #test
 Build 'test' './test'

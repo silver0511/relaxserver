@@ -17,7 +17,17 @@ function readfile ()
       readfile $1"/"$file
     elif [ -x $1"/"$file ]
     then
-      $1"/"$file
+        FILE_NAME=`basename $file`
+        if [ $FILE_NAME = "test_log_trace" ]
+        then
+            echo -e "skip $FILE_NAME test"
+        else
+            cd $1"/"
+            chmod +x ./$file
+            export LD_LIBRARY_PATH=$ROOT_DIR/bin/$COMPILE_TYPE:$LD_LIBRARY_PATH
+            ./$file
+            cd -
+        fi
     fi
   done
 }

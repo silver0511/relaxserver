@@ -16,7 +16,7 @@ extern RELAX_NAMESPACE::LogTrace g_log_trace;
 #define LOG_TRACE(a_level, a_value) \
     if(g_log_trace.get_level() >= a_level)\
     {\
-        S_LOG_BUFFER *l_buffer = g_log_trace.write_begin(a_level, __FUNCTION__, __FILE__, __LINE__);\
+        RELAX_NAMESPACE::S_LOG_BUFFER *l_buffer = g_log_trace.write_begin(a_level, __FUNCTION__, __FILE__, __LINE__);\
         if(NULL != l_buffer)\
         {\
             (*l_buffer) << a_value;\

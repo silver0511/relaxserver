@@ -14,3 +14,19 @@
 6. temporary variable: start with "l_" and lowercase and split with "_" each word[eg. string l_single_word]
 7. static variable: start with "s_" and lowercase and split with "_" each word[eg. static int s_word_size]
 8. enum: start with "E_" and uppercase and split with "_" each word[eg. enum E_TYPE]
+
+##step
+###debug
+1. ./build_clean.sh
+2. ./build_prepare.sh debug
+3. ./build.sh debug
+4. ./run_test.sh debug
+###release
+1. ./build_clean.sh
+2. ./build_prepare.sh release
+3. ./build.sh release
+4. ./run_test.sh release
+
+##start
+cd ./bin/debug[release]
+./start

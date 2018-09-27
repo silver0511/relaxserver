@@ -27,7 +27,7 @@ RELAX_NAMESPACE_BEGIN
 #else
     inline int gettid()
     {
-        return 0;
+        return getpid();
     }
 #endif
 
@@ -129,7 +129,7 @@ RELAX_NAMESPACE_BEGIN
     {
         if(NULL == handle)
         {
-            return FALSE;
+            return false;
         }
 
         bool result = (bool)dlclose(handle);
@@ -137,7 +137,7 @@ RELAX_NAMESPACE_BEGIN
         if(NULL != l_error)
         {
             printf("\n free_lib failed: %s \n", l_error);
-            return NULL;
+            return false;
         }
         return result;
     }

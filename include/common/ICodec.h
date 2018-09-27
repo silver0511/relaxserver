@@ -14,7 +14,9 @@ RELAX_NAMESPACE_BEGIN
     class ICodec
     {
     public:
-        enum ENUM_TYPE
+        typedef function<long(ubyte *, ulong)> ICustomCodec;
+
+        enum ENUM_CODEC_TYPE
         {
             READ = 1,
             WRITE
@@ -40,11 +42,16 @@ RELAX_NAMESPACE_BEGIN
         virtual long codec(ubyte *value, uint &buf_len) = 0;
         virtual long codec(string &value) = 0;
         virtual long codec(wstring &value) = 0;
+        //offset
+        virtual long codec(int &value, uint offset) = 0;
+        //custom
+        virtual long codec(ICustomCodec custom_codec) = 0;
 
         virtual uint get_pos() = 0;
-        virtual ubyte *get_buf() = 0;
+        virtual ENUM_CODEC_TYPE get_codec_type() = 0;
+        virtual ulong get_buf_len() = 0;
     protected:
-        ENUM_TYPE   m_type;
+        ENUM_CODEC_TYPE   m_type;
     };
 
 RELAX_NAMESPACE_END

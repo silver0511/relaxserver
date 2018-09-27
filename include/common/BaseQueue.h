@@ -63,7 +63,7 @@ public:
         m_safe = thread_safe;
         if(m_max_cache_count > 0)
         {
-            for (int i = 0; i < m_max_cache_count; ++i)
+            for (int i = 0; i < (int)m_max_cache_count; ++i)
             {
                 S_QUEUE_NODE *node = new S_QUEUE_NODE;
                 node->m_next = m_cache_node;
