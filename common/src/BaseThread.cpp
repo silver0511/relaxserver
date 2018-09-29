@@ -80,5 +80,5 @@ void* BaseThread::thread_proc(void *ptr)
 bool ThreadHelper::begin_thread(void (*start_func)(void *), void *param)
 {
     BaseThread *base_thread = new BaseThread();
-    base_thread->begin_thread(true, start_func, param);
+    return base_thread->begin_thread(true, start_func, param);
 }

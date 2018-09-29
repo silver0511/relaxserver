@@ -1,6 +1,6 @@
 package com.relax.pb.business;
 
-import "common.proto"
+import "common.proto";
 
 message LOGIN_RQ
 {

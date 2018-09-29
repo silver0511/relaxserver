@@ -177,11 +177,11 @@ public:
         if(m_safe)
         {
             LOCK_HELPER(m_lock);
-            return values_imple();
+            return values_impl();
         }
         else
         {
-            return values_imple();
+            return values_impl();
         }
     }
 

@@ -48,15 +48,19 @@ message("EXECUTABLE_OUTPUT_PATH = ${EXECUTABLE_OUTPUT_PATH}")
 include_directories(/usr/local/include)
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
-#include_directories(${PROJECT_SOURCE_DIR}/include/package/hpb)
+include_directories(${PROJECT_SOURCE_DIR}/include/package/protobuf/hpb)
 include_directories(${PROJECT_SOURCE_DIR}/third_party)
-#include_directories(${PROJECT_SOURCE_DIR}/third_party/protobuf-2.6.0)
+include_directories(${PROJECT_SOURCE_DIR}/third_party/protobuf-2.6.0)
 
 #third_party
 add_subdirectory(third_party)
 #common
 add_subdirectory(common)
+#pb_serialize
+add_subdirectory(pb_serialize)
 #network
 add_subdirectory(network/nett)
+#server
+add_subdirectory(server)
 #test
 add_subdirectory(test)

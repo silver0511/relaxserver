@@ -4,8 +4,6 @@
  * created by silver0511
  */
 
-#include <common/System.h>
-
 #include "common/System.h"
 
 USING_RELAX_NAMESPACE

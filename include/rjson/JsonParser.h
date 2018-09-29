@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <type_traits>
 #include <iostream>
+#include <sys/time.h>
 #include "rapidjson/document.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/stringbuffer.h"
@@ -18,6 +19,7 @@
 #include "rapidjson/error/en.h"
 #include "stdafx.h"
 
+using namespace std;
 RELAX_NAMESPACE_BEGIN
 
 typedef rapidjson::Value RJsonValue;

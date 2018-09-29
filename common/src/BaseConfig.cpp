@@ -4,8 +4,6 @@
  * created by silver0511
  */
 
-#include <common/BaseConfig.h>
-
 #include "common/BaseConfig.h"
 USING_RELAX_NAMESPACE
 

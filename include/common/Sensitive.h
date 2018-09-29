@@ -53,7 +53,7 @@ RELAX_NAMESPACE_BEGIN
     private:
         void insert(const string &text);
         string get_single_word(const string &text, int &offset);
-        bool check(S_T_NODE *s_t_node, const string &text, int &offset);
+        bool check(S_T_NODE *s_t_node, const string &in_text, int &start_index, int &offset, OUT string &out_text);
 
     private:
         S_T_NODE    m_parent_node;

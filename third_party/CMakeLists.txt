@@ -9,10 +9,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(PLATFORM_TYPE mac)
 else()
-    message("Currect System = ${CMAKE_SYSTEM_NAME} NOT ADAPTER")
+    message("Current System = ${CMAKE_SYSTEM_NAME} NOT ADAPTER")
 endif()
 
-include_directories(${COMPILE_ROOT_PATH}/third_party/gtest-1.7.0/include)
-
 #copy third_party
-#file(COPY lib/${PLATFORM_TYPE}/libprotobuf.a DESTINATION &{STATIC_LIB_OUTPUT_PATH})
+#file(COPY lib/${PLATFORM_TYPE}/libprotobuf.a DESTINATION ${STATIC_LIB_OUTPUT_PATH})

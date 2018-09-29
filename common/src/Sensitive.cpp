@@ -17,7 +17,7 @@ S_T_NODE::S_T_NODE() : m_end(false), m_level(0), m_fail_pointer(NULL)
 S_T_NODE::~S_T_NODE()
 {
     S_MAP_ITER iter;
-    for(iter == s_map.begin(); iter != s_map.end(); iter++)
+    for(iter = s_map.begin(); iter != s_map.end(); iter++)
     {
         SAFE_DELETE(iter->second);
     }
@@ -118,10 +118,10 @@ bool Sensitive::exists(const string &text)
     {
         int offset = cur_index;
         int l_word_size = System::check_utf_8(text[offset]);
-        if(check(&m_parent_node, text, offset))
-        {
-            return true;
-        }
+//        if(check(&m_parent_node, text, offset))
+//        {
+//            return true;
+//        }
 
         cur_index = l_word_size;
     }
@@ -132,41 +132,41 @@ bool Sensitive::exists(const string &text)
 int Sensitive::replace(const string &in_text, string &out_text)
 {
     int c_count = 0;
-    int cur_index = 0;
-    bool is_sensitive = false;
-    bool is_last_sensitive = false;
-    while(cur_index < in_text.size())
-    {
-        int offset = cur_index;
-        int l_word_size = System::check_utf_8(in_text[offset]);
-        if(!check(&m_parent_node, in_text, offset))
-        {
-            out_text += in_text.substr(cur_index, l_word_size);
-            cur_index += l_word_size;
-            is_last_sensitive = false;
-            c_count++;
-        }
-        else
-        {
-            is_sensitive = true;
-            if(!is_last_sensitive)
-            {
-                out_text += m_replace_word;
-                c_count += m_replace_word.size();
-            }
-
-            if(cur_index == offset)
-            {
-                printf("[Sensitive] invalid offset: %d, text: %s \n", offset, in_text.c_str());
-                cur_index += l_word_size;
-            }
-            else
-            {
-                cur_index = offset;
-            }
-            is_last_sensitive = true;
-        }
-    }
+//    int cur_index = 0;
+//    bool is_sensitive = false;
+//    bool is_last_sensitive = false;
+//    while(cur_index < in_text.size())
+//    {
+//        int offset = cur_index;
+//        int l_word_size = System::check_utf_8(in_text[offset]);
+//        if(!check(&m_parent_node, in_text, offset))
+//        {
+//            out_text += in_text.substr(cur_index, l_word_size);
+//            cur_index += l_word_size;
+//            is_last_sensitive = false;
+//            c_count++;
+//        }
+//        else
+//        {
+//            is_sensitive = true;
+//            if(!is_last_sensitive)
+//            {
+//                out_text += m_replace_word;
+//                c_count += m_replace_word.size();
+//            }
+//
+//            if(cur_index == offset)
+//            {
+//                printf("[Sensitive] invalid offset: %d, text: %s \n", offset, in_text.c_str());
+//                cur_index += l_word_size;
+//            }
+//            else
+//            {
+//                cur_index = offset;
+//            }
+//            is_last_sensitive = true;
+//        }
+//    }
 
     return c_count;
 }
@@ -269,27 +269,28 @@ string Sensitive::get_single_word(const string &text, int &offset)
 
 bool Sensitive::check(S_T_NODE *s_t_node, const string &in_text, int &start_index, int &offset, OUT string &out_text)
 {
-    if(s_t_node->is_end())
-    {
-        //is sensitive
-        return true;
-    }
-
-    string l_single_word = get_single_word(text, offset);
-
-    S_T_NODE *l_child_node = s_t_node->find(l_single_word);
-    if(NULL == l_child_node)
-    {
-        S_T_NODE *l_fail_node = s_t_node->get_fail_pointer();
-        if(l_fail_node == NULL)
-        {
-            //is not sensitive
-            return false;
-        }
-
-        start_index += l_fail_node->m_level;
-        return check(l_fail_node, text, start_index, offset);
-    }
-
-    return check(l_child_node, text, offset);
+    return true;
+//    if(s_t_node->is_end())
+//    {
+//        //is sensitive
+//        return true;
+//    }
+//
+//    string l_single_word = get_single_word(text, offset);
+//
+//    S_T_NODE *l_child_node = s_t_node->find(l_single_word);
+//    if(NULL == l_child_node)
+//    {
+//        S_T_NODE *l_fail_node = s_t_node->get_fail_pointer();
+//        if(l_fail_node == NULL)
+//        {
+//            //is not sensitive
+//            return false;
+//        }
+//
+//        start_index += l_fail_node->m_level;
+//        return check(l_fail_node, text, start_index, offset);
+//    }
+//
+//    return check(l_child_node, text, offset);
 }

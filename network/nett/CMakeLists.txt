@@ -1,19 +1,21 @@
 cmake_minimum_required(VERSION 3.7)
-project(libnett)
+project(nett)
 
-set(CMAKE_CXX_STANDARD 11)
+message(STATUS "start prepare nett project......")
 
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -std=c++0x -O0 -g -ggdb -Wall -pthread -fPIC -rdynamic")
-SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -std=c++0x -w -O3 -pthread -fPIC -rdynamic")
+aux_source_directory(src NETT_SOURCES)
+
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -ggdb -Wall")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -w")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions(-DTRACE_LOG -DNDEBUG)
+    add_definitions(-DTRACE_LOG -DNDEBUG -D__SERVER -DAPI_EXPORTS)
 else()
-    add_definitions(-D_DEBUG -DTRACE_LOG)
+    add_definitions(-D_DEBUG -DTRACE_LOG -D__SERVER -DAPI_EXPORTS)
 endif()
 
-aux_source_directory(src LIBNETT_SOURCES)
-
-add_library(nett SHARED ${LIBNETT_SOURCES})
+link_directories(${SHARED_LIB_OUTPUT_PATH})
+add_library(nett SHARED ${NETT_SOURCES})
+target_link_libraries(nett -lcommon)
 
 install(TARGETS nett DESTINATION ${SHARED_LIB_OUTPUT_PATH})

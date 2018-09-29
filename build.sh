@@ -49,8 +49,12 @@ fi
 Build 'third_party' './third_party'
 #######common
 Build 'common' './common'
+#######pb_serialize
+Build 'pb_serialize' './pb_serialize'
 ######network
 Build 'nett' './network/nett'
+######server
+Build 'server' './server'
 #test
 Build 'test' './test'
 #-----------end--------------------------------

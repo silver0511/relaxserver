@@ -27,14 +27,14 @@ if [ ! -d "./bin/release/log" ]; then
 fi
 
 #proto
-#rm -rf ./include/package/hpb
-#rm -rf ./net_serialize/hpb
-#mkdir ./net_serialize/hpb
-#mkdir ./include/hpb
-#protoc -I=./include/package/pb --cpp_out=./include/package/hpb ./include/package/pb/*.proto
-#rm -rf ./include/package/hpb/*.cc
-#protoc -I=./include/package/pb --cpp_out=./net_serialize/hpb ./include/package/pb/*.proto
-#rm -rf ./net_serialize/hpb/*.h
+rm -rf ./include/package/protobuf/hpb
+rm -rf ./pb_serialize/hpb
+mkdir ./pb_serialize/hpb
+mkdir ./include/package/protobuf/hpb
+protoc -I=./include/package/protobuf/pb --cpp_out=./include/package/protobuf/hpb ./include/package/protobuf/pb/*.proto
+rm -rf ./include/package/protobuf/hpb/*.cc
+protoc -I=./include/package/protobuf/pb --cpp_out=./pb_serialize/hpb ./include/package/protobuf/pb/*.proto
+rm -rf ./pb_serialize/hpb/*.h
 
 date
 if [ -z $COMPILE_TYPE ];
