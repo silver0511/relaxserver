@@ -60,9 +60,9 @@ void S_T_NODE::create_fail_pointer(S_T_NODE *parent_node, OUT queue<S_T_NODE *> 
         trace_queue.push(l_child_node);
 
         /**
-         * if: current child node's value can be founded in it's fail pointer's child
+         * if: current child node value can be founded in it's fail pointer child
          * then: set current child's fail pointer to that node
-         * else: search next fail pointer until null pointer then set current child's fail pointer to parent node
+         * else: set current child's fail pointer to parent node while fail pointer is null
          */
         while(NULL != l_fail_pointer)
         {
